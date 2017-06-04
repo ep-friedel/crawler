@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0"/>
+    <title>Crawler - Admininterface</title>
+    <link rel="stylesheet" id="basic-css" href="css/base.css" type="text/css" media="all">
+    <link rel="stylesheet" id="basic-css" href="css/admin.css" type="text/css" media="all">
+    <script src="js/admin.js"></script>
+</head>
+<body>
+    <div id="reader">
+        <ul>
+            <li>
+                <p id="serverActionsHead" class="head">Server Actions</p>
+                <ul id="serverActions" class="sublist hideSoft">
+                    <li id="removeChapter">
+                        <p class="minor">Remove Chapter:</p>
+                        <div>
+                            <div id="removeChapterPicker" class="picker"></div>
+                            <p class="action button">Remove Chapter!</p>
+                        </div>
+                    </li>
+                    <li id="markAllRead">
+                        <p class="minor">Mark All Chapters Read:</p>
+                        <div class="flexCol">
+                            <div class="flexRow">
+                                <label for="toggleStoryAll">Mark all stories read:</label>
+                                <div class="toggleButton on" id="toggleStoryAll"><span></span></div>
+                            </div>
+                            <div id="markReadStoryPicker" class="picker story hideSoft"></div>
+                            <p id="markAllReadButton" class="action button">Mark Read!</p>
+                        </div>
+                    </li>
+                    <li>
+                        <p id="rebuildDB" class="minor action">Rebuild Chapter Database</p>
+                    </li>
+                    <li id="triggerCrawler">
+                        <p class="minor action">Start the Webcrawler</p>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p id="manageSeriesHead" class="head">Manage Series</p>
+                <ul id="manageSeries" class="sublist hideSoft">
+                    <li id="addSeries">
+                        <p class="minor">Manage Series</p>
+                        <div class="flexCol">
+                            <div class="addOrEdit flexRow">
+                                    <p id="addNewSeriesButton" class="button minbutton active">Add Series</p>
+                                    <p id="editSeries" class="button minbutton">Edit Series</p>
+                                    <p id="deleteSeries" class="button minbutton">Delete Series</p>
+                            </div>
+                            <div class="inputSettings flexRow">
+                                    <p id="oneVar" class="button minbutton active">One Variable</p>
+                                    <p id="twoVar" class="button minbutton">Two Variables</p>
+                                    <p id="link" class="button minbutton">Get Link from Body</p>
+                            </div>
+                            <div class="inputContainer flexRow">
+                                <div class="selectShort flexRow hideSoft"><div class="fullWidth" id="editStoryTagPicker"></div></div>
+                                <div class="inputShort flexRow"><span>Tag:</span><input type="text" class="settingsInput" id="shortField" value=""></div>
+                                <div class="inputName flexRow"><span>Name:</span><input type="text" class="settingsInput" id="nameField" value=""></div>
+                                <div class="inputRss flexRow"><span>RSS-Feed:</span><input type="text" class="settingsInput" id="rssField" value=""></div>
+                                <div class="inputUrl1 flexRow"><span>Url Part1:</span><input type="text" class="settingsInput" id="url1Field" value=""></div>
+                                <div class="inputVar1 flexRow"><span>Url Var1:</span><input type="number" class="settingsInput" id="var1Field" value="1"></div>
+                                <div class="inputUrl2 flexRow"><span>Url Part2:</span><input type="text" class="settingsInput" id="url2Field" value=""></div>
+                                <div class="inputVar2 flexRow hideSoft"><span>Url Var2:</span><input type="text" class="settingsInput" id="var2Field" value="1"></div>
+                                <div class="inputUrl3 flexRow hideSoft"><span>Url Part3:</span><input type="text" class="settingsInput" id="url3Field" value=""></div>
+                                <div class="inputCurrentLink flexRow hideSoft"><span>Start-Chapter Link:</span><input type="text" class="settingsInput" id="currentLinkField" value="false"></div>
+                                <div class="inputBookChapterReset flexRow hideSoft"><span>Reset Chapter Count on new Book:</span><input type="number" min="0" max="1" class="settingsInput" id="bookChapterResetField" value="1"></div>
+                                <div class="inputChapLen flexRow"><span>Minimal Chapter Length:</span><input type="text" class="settingsInput" id="minChapLen" value=""></div>
+                            </div>
+                            <p id="addSeriesButton" class="action button">Add Series!</p>
+                            <p id="editSeriesButton" class="action button hideSoft">Submit Edit!</p>
+                            <p id="deleteSeriesButton" class="action button hideSoft">Delete Series!</p>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p id="serverSettingsHead" class="head">Server Settings</p>
+                <ul id="serverSettings" class="sublist hideSoft">
+                    <li>
+                        <p id="logLevel" class="minor">Log-Level:</p>
+                        <div id="logLevelPicker" class="picker logLevel"></div>
+                        <p id="logLevelButton" class="action button">Set Log-Level!</p>
+                    </li>
+                    <li>
+                        <p id="restartServer" class="minor action">Restart the Server!</p>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+        <div id="menu">
+        <p id="readerLink" class="head">Back to Reader</p>
+    </div>
+</body>
+</html>

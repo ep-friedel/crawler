@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0"/>
+    <title>Crawler - New Stories</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="16x16" href="images/book_16.ico">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" id="basic-css" href="css/base.css" type="text/css" media="all">
+    <script src="js/base.js"></script>
+</head>
+
+<body class="loginmode">
+    <form id="loginForm" name="loginForm" class="loginForm" method="post" role="form">
+        <i class="headline"></i>
+        <div>
+            <label for="user">Nutzer:</label>
+            <input type="text" name="user" id="userInput">
+        </div>
+        <div>
+            <label for="password">Passwort:</label>
+            <input type="password" name="password" id="passwordInput">
+        </div>
+        <button id="loginButton" type="button">Submit</button>
+    </form>
+    <div id="loginFrame">
+    </div>
+    <div  class="hideSoft" id="reader">
+        <ul class="">
+        </ul>
+    </div>
+    <div id="message"><!-- all read message --></div>
+    <div class="markReadButton hidden fa fa-check" id="markReadButton">
+        <span></span>
+    </div>
+    <div class="hideSoft" id="menu">
+        <div class="menuHead">
+            <p id="menuHead" class="fa fa-bars"></p>
+            <div class="refresh">
+                <div id="reload" title="Refresh" class="innerRefresh fa fa-refresh"></div>
+            </div>
+            <div class="connection"></div>
+        </div>
+        <div id="menuWrapper">
+            <ul id="menuList" class="sublist">
+                <li id="loadStory" class="minimized">
+                    <p class="minor">Load Chapters:</p>
+                    <div class="flexCol">
+                        <div id="loadStoryPicker" class="picker flexRow"></div>
+                        <p id="loadChapters" class="action button inactive">Load Chapters!</p>
+                    </div>
+                </li>
+                <li id="manageSubs" class="minimized">
+                    <p class="minor">Manage Subscriptions</p>
+                    <ul id="subsList" class="sublist">
+
+                    </ul>
+                </li>
+                <li id="markAllRead" class="minimized">
+                    <p class="minor">Mark All Chapters Read:</p>
+                    <div class="flexCol">
+                        <div class="flexRow">
+                            <label for="toggleStoryAll">Mark all stories read:</label>
+                            <div class="toggleButton fa fa-check" id="toggleStoryAll"></div>
+                        </div>
+                        <div id="markReadStoryPicker" class="picker story  flexRow hideSoft"></div>
+                        <p id="markAllReadButton" class="action button">Mark Read!</p>
+                    </div>
+                </li>
+                <li id="status" class="hidden minimized">
+                    <p class="minor">Status</p>
+                    <div id="status" class="status">
+                        <div class="flexRow">
+                            <label>Usercount</label>
+                            <span id="usercount"></span>
+                        </div>
+                        <div class="flexRow">
+                            <label>Uptime</label>
+                            <span id="uptime"></span>
+                        </div>
+                        <div class="flexCol">
+                            <h5>Inactive Stories</h5>
+                            <ul id="inactiveList">
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li id="sound" class="minimized">
+                    <p class="minor">Notification settings</p>
+                    <div class="flexCol">
+                        <div class="flexRow">
+                            <label for="toggleSound">Play Sound:</label>
+                            <div class="toggleButton fa fa-check" id="toggleSound"></div>
+                        </div>
+                        <div class="flexRow">
+                            <label for="toggleVibrate">Trigger Vibration:</label>
+                            <div class="toggleButton fa fa-check" id="toggleVibrate"></div>
+                        </div>
+                    </div>                    
+                </li>
+                <li id="resetStorage">
+                    <p id="resetStorageButton" class="minor action">Reset local Storage</p>
+                </li>
+                <li id="reloadPage">
+                    <p id="reloadPageButton" class="minor action">Hard Reload</p>
+                </li>
+                <li id="logout">
+                    <p id="logoutButton" class="minor action">Logout</p>
+                </li>
+                <li id="admin" class="hidden">
+                    <p id="adminButton" class="minor action">Goto Admin Panel</p>
+                </li>
+            </ul>
+            <i class="fa fa-chevron-left"></i>
+        </div>
+    </div>
+</body>
+</html>

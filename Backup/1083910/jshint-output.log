@@ -1,0 +1,4 @@
+
+2 lint errors found in Public/dev/js/base.js
+  [109,26](W086) Expected a 'break' statement before 'case'.
+  [1786,2](W033) Missing semicolon.

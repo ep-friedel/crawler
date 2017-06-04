@@ -1,0 +1,9 @@
+
+1 lint errors found in Public/dev/js/admin.js
+  [677,34](W069) ['jwt'] is better written in dot notation.
+5 lint errors found in Public/dev/js/base.js
+  [91,26](W086) Expected a 'break' statement before 'case'.
+  [1443,45](W069) ['timestamps'] is better written in dot notation.
+  [1444,78](W069) ['timestamps'] is better written in dot notation.
+  [1449,45](W069) ['timestamps'] is better written in dot notation.
+  [1451,45](W069) ['timestamps'] is better written in dot notation.

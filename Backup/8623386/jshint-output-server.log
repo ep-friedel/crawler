@@ -1,0 +1,277 @@
+
+39 lint errors found in modules/auth/jwt.js
+  [2,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [6,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [7,9](I001) Comma warnings can be turned off with 'laxcomma'.
+  [6,22](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [7,33](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [12,5](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [16,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [19,34](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [20,54](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [21,67](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [24,59](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [25,29](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [34,45](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [36,104](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [44,45](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [49,13](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [53,64](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [60,53](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [68,45](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [69,13](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [69,51](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [91,31](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [92,13](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [94,51](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [103,33](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [118,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [119,13](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [123,38](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [130,17](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [139,28](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [146,36](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [148,25](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [150,34](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [154,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [160,39](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [162,25](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [164,34](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [168,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [174,33](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+28 lint errors found in modules/core/handler.js
+  [2,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [8,25](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [14,28](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [20,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [26,38](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [29,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [34,20](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [38,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [41,30](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [43,20](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [48,35](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [50,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [52,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [57,39](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [59,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [64,36](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [67,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [72,46](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [80,42](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [83,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [88,33](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [94,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [100,25](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [106,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [112,27](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [118,48](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [121,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [131,47](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+51 lint errors found in modules/core/methods.js
+  [2,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [3,9](I001) Comma warnings can be turned off with 'laxcomma'.
+  [2,49](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [3,52](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [4,39](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [5,88](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [6,91](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [7,88](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [8,53](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [18,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [18,22](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [19,22](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [20,19](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [23,5](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [28,25](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [29,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [36,27](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [45,38](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [47,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [49,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [51,17](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [56,60](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [92,39](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [94,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [96,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [98,17](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [100,56](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [169,28](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [170,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [176,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [177,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [183,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [184,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [190,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [192,68](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [219,18](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [224,38](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [229,21](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [233,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [242,21](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [263,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [268,41](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [269,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [274,36](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [275,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [282,46](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [283,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [283,53](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [288,80](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [291,87](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [291,87](E043) Too many errors. (50% scanned).
+51 lint errors found in modules/core/router.js
+  [2,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [3,9](I001) Comma warnings can be turned off with 'laxcomma'.
+  [2,40](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [3,27](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [4,54](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [5,55](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [6,59](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [7,30](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [8,73](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [14,53](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [27,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [27,22](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [28,22](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [29,22](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [32,5](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [56,52](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [60,47](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [64,77](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [87,66](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [90,20](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [93,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [99,61](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [107,68](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [110,20](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [113,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [123,65](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [125,49](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [127,22](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [133,62](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [136,25](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [147,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [153,70](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [156,25](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [160,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [166,63](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [172,37](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [180,80](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [183,25](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [187,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [197,59](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [203,64](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [206,20](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [209,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [216,66](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [219,20](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [222,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [232,61](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [238,55](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [240,46](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [243,20](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [243,20](E043) Too many errors. (78% scanned).
+12 lint errors found in modules/log/logger.js
+  [2,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [3,9](I001) Comma warnings can be turned off with 'laxcomma'.
+  [2,22](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [3,22](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [6,5](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [7,20](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [8,13](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [19,21](W119) 'spread/rest operator' is only available in ES6 (use 'esversion: 6').
+  [19,31](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [20,9](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [20,81](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [39,31](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+45 lint errors found in modules/sql/chapterDB.js
+  [2,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [9,5](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [17,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [22,20](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [36,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [37,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [39,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [50,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [51,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [55,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [64,37](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [65,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [67,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [77,69](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [78,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [80,25](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [90,31](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [91,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [93,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [97,42](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [102,30](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [103,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [104,121](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [118,35](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [119,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [121,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [131,21](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [132,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [133,82](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [143,35](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [144,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [146,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [156,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [157,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [159,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [170,59](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [171,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [172,13](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [174,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [184,35](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [185,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [187,25](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [197,62](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [198,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [200,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+43 lint errors found in modules/sql/userDB.js
+  [2,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [9,5](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [17,28](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [22,24](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [36,56](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [37,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [39,25](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [49,30](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [50,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [52,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [63,35](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [64,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [66,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [75,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [76,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [78,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [88,38](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [89,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [91,26](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [101,38](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [102,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [103,97](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [119,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [120,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [121,83](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [131,30](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [132,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [134,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [144,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [145,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [147,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [157,35](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [158,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [160,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [170,35](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [171,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [173,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [183,35](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [184,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [186,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [196,31](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [197,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [199,29](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').

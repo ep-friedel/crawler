@@ -1,0 +1,1 @@
+systemctl restart crawlerd >> log.txt

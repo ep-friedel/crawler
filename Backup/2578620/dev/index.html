@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0"/>
+    <title>Crawler - New Stories</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="/images/bookcase_192.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" id="basic-css" href="css/base.css" type="text/css" media="all">
+    <script src="js/base.js"></script>
+</head>
+
+<body class="loginmode">
+    <div id="loginFrame">
+        <form id="loginForm" name="loginForm" class="loginForm" method="post" role="form">
+            <p class="headline">Login - Crawler</p>
+            <label for="user">Nutzer:</label>
+            <input type="text" name="user" id="userInput">
+            <label for="password">Passwort:</label>
+            <input type="password" name="password" id="passwordInput">
+            <button id="loginButton" type="button">Submit</button>
+        </form>
+    </div>
+    <div  class="hideSoft" id="reader">
+        <ul class="">
+        </ul>
+    </div>
+    <div id="message">
+    </div>
+    <div id="reload" title="Refresh" class="refresh">Refresh</div>
+    <div class="hideSoft" id="menu">
+        <p id="menuHead" class="head">Menu</p>
+
+        <ul id="menuList" class="sublist">
+            <li id="loadStory" class="minimized">
+                <p class="minor">Load Chapters:</p>
+                <div class="flexCol">
+                    <div id="loadStoryPicker" class="picker flexRow"></div>
+                    <p id="loadChapters" class="action button inactive">Load Chapters!</p>
+                </div>
+            </li>
+            <li id="manageSubs" class="minimized">
+                <p class="minor">Manage Subscriptions</p>
+                <ul id="subsList" class="sublist">
+
+                </ul>
+            </li>
+            <li id="markAllRead" class="minimized">
+                <p class="minor">Mark All Chapters Read:</p>
+                <div class="flexCol">
+                    <div class="flexRow">
+                        <label for="toggleStoryAll">Mark all stories read:</label>
+                        <div class="toggleButton on" id="toggleStoryAll"><span></span></div>
+                    </div>
+                    <div id="markReadStoryPicker" class="picker story  flexRow hideSoft"></div>
+                    <p id="markAllReadButton" class="action button">Mark Read!</p>
+                </div>
+            </li>
+            <li id="console" class="minimized">
+                <p class="minor">Console</p>
+                <div id="console" class="console popout">
+                    <h3>Server Status</h3>
+                    <div class="connection">
+                        <div class="status yellow">Client</div>
+                        <div class="arrows">
+                            <div class="arrow completed">
+                                <div class="arrowhead">
+
+                                </div>
+                            </div>
+                            <div class="arrow back">
+                                <div class="back arrowhead">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="server red">Server</div>
+                    </div>
+                    <h3>Output</h3>
+                    <div class="output"></div>
+                    <p id="hideConsole" class="minor action button">Hide Console</p>
+                </div>
+            </li>
+            <li id="resetStorage">
+                <p id="resetStorageButton" class="minor action">Reset local Storage</p>
+            </li>
+            <li id="reloadPage">
+                <p id="reloadPageButton" class="minor action">Hard Reload</p>
+            </li>
+            <li id="logout">
+                <p id="logoutButton" class="minor action">Logout</p>
+            </li>
+            <li id="admin">
+                <p id="adminButton" class="hidden minor action">Goto Admin Panel</p>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

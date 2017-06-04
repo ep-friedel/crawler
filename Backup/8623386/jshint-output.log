@@ -1,0 +1,105 @@
+
+51 lint errors found in Public/dev/js/admin.js
+  [1,1](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [3,1](I001) Comma warnings can be turned off with 'laxcomma'.
+  [2,22](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [3,15](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [6,5](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [7,15](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [8,15](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [12,51](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [13,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [19,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [27,41](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [28,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [34,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [42,40](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [43,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [49,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [57,39](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [58,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [63,32](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [71,38](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [72,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [80,42](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [81,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [83,40](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [87,36](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [96,43](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [97,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [99,40](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [103,36](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [106,57](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [107,44](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [130,47](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [131,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [133,40](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [138,36](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [150,47](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [151,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [153,40](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [158,36](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [170,38](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [171,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [181,36](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [182,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [190,38](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [191,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [198,55](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [205,37](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [206,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [214,52](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [221,35](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [221,35](E043) Too many errors. (29% scanned).
+51 lint errors found in Public/dev/js/base.js
+  [3,48](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [7,1](I001) Comma warnings can be turned off with 'laxcomma'.
+  [6,21](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [8,5](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [10,18](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [11,19](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [13,5](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [16,5](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [17,15](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [18,13](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [20,44](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [21,49](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [22,65](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [23,51](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [24,45](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [25,65](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [26,51](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [27,61](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [28,59](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [30,5](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [32,27](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [33,27](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [34,21](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [35,21](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [36,25](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [37,23](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [38,17](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [39,17](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [40,25](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [41,28](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [46,48](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [47,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [48,5](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [53,61](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [70,36](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [71,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [77,26](W086) Expected a 'break' statement before 'case'.
+  [91,46](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [92,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [93,5](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [108,38](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [114,35](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [115,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [117,5](W104) 'let' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [138,42](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [139,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [150,40](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [151,5](W104) 'const' is available in ES6 (use 'esversion: 6') or Mozilla JS extensions (use moz).
+  [151,80](W014) Misleading line break before ','; readers may interpret this as an expression boundary.
+  [161,34](W119) 'arrow function syntax (=>)' is only available in ES6 (use 'esversion: 6').
+  [161,34](E043) Too many errors. (9% scanned).

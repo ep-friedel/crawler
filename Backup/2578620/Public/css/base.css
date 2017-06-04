@@ -1,0 +1,721 @@
+body {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    font-family: monospace;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+em{
+    font-style: italic;
+}
+
+p {
+    margin: 1.5vh 0;
+}
+
+.hidden {
+    display:none !important;
+}
+
+.hideSoft{
+    position: absolute !important;
+    top: -9999vh !important;
+    left: -9999vw !important;
+}
+
+#reader{
+    background: white;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    align-items: center;
+    justify-content: flex-start;
+    position: fixed;
+    z-index: 1000;
+    color: black;
+    padding-bottom: 2vh;
+    max-height: 90vh;
+}
+
+#reader > ul {
+    line-height: 5vh;
+    font-size: 5vh;
+    font-weight: bolder;
+    list-style: none;
+    margin: 0;
+    height: 100%;
+    width: 100vw;
+    padding: 0;
+}
+
+#reader > ul > li {
+    width: 100vw;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+.sublist {
+    line-height: 3vh;
+    font-size: 3vh;
+    font-weight: normal;
+    list-style: none;
+    height: 90vh;
+    overflow-X: visible;
+    display: flex;
+    padding: 0;
+}
+.sublist > li {
+    min-width: 95vw;
+    max-width: 95vw;
+    padding: 2.5vh 2.5vw 10vh 2.5vw;
+    overflow-y: scroll;
+    cursor: default;
+}
+.head{
+    padding: 2.5vh 0;
+    height: 5vh;
+    width: 100vw;
+    text-align: center;
+    border-bottom: solid 0.1vh;
+    margin: 0;
+    box-shadow: black 0 0.5vh 3vh -0.5vh;
+    cursor: pointer;
+}
+#message {
+    line-height: 5vh;
+    font-size: 5vh;
+    font-weight: bolder;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#menu{
+    height: 10vh;
+    position: fixed;
+    bottom: 0vh;
+    width: 100vw;
+    box-shadow: black 0 7vh 7vh 6.8vh;
+    cursor: pointer;
+    border-top: solid #000000 0.2vh;
+    z-index: 9000;
+    font-size: 5vh;
+    background: white;
+    transition: height 0.2s;
+}
+#menu.show{
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+#menuHead{
+    position: fixed;
+    background: white;
+    z-index: 1000;
+}
+
+
+
+.readerMode #reader{
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+.readerMode #menu{
+    display: none;
+}
+
+.picker {
+    width:95vw;
+    display:flex;
+    justify-content:space-around;
+}
+
+#menu .sublist {
+    height: auto;
+    flex-direction: row;
+    padding-top: 10vh;
+    flex-wrap: wrap;
+}
+
+#menu .sublist > li {
+    min-width: auto;
+    width: 60vh;
+    flex-grow: 1;
+    box-shadow:#000 0 .5vh 3vh -1vh;
+    border-radius:.5vh;
+    overflow:hidden;
+    margin:1.25vh 2.5vw;
+    padding:0;
+}
+
+li.minimized:before {
+    content: '+';
+    position: absolute;
+    top: 50%;
+    left: 1vh;
+    transform: translateY(-50%);
+    font-size: 4.5vh;
+    pointer-events: none;
+}
+
+li.expanded {
+    position: relative;
+}
+
+li.expanded:before {
+    content: '-';
+    position: absolute;
+    top: 3vh;
+    left: 1vh;
+    transform: translateY(-50%);
+    font-size: 6vh;
+    pointer-events: none;
+}
+
+li.minimized{
+    height: 6vh;
+    position: relative;
+}
+
+li.minimized > p{
+    box-shadow: none;
+}
+
+.minor {
+    /* width:95vw; */
+    height:3vh;
+    text-align:center;
+    box-shadow:0 1vh 3vh -2vh;
+    margin:1vh 0;
+    padding:1vh 0;
+}
+
+.action {
+    cursor:pointer;
+    position:relative;
+    box-shadow:none;
+    margin:0;
+    padding:2vh 0;
+}
+
+.action:active {
+    box-shadow:inset 0 1vh 2vh -1.5vh #909090, inset 1vh 0 2vh -1.5vh #585858, inset 0 -1vh 2vh -1.5vh #505050, inset -1vh 0 2vh -1.5vh #a5a5a5;
+}
+
+.button {
+    display:inline-block;
+    box-shadow:#000 .5vh .5vh 2vh -.2vh;
+    border-radius:.3vh;
+    width:80%;
+    margin:.5vh 0 2vh;
+    padding:2vh;
+    text-align: center;
+}
+
+.button:active {
+    box-shadow:#000 .2vh .2vh 2vh -.7vh;
+}
+
+.confirm:after {
+    content:'Confirm Action?';
+    position:absolute;
+    background:#000;
+    color:#FFF;
+    left:0;
+    top:0;
+    bottom:0;
+    right:0;
+    z-index:1000;
+    border:#000 solid .3vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    -webkit-animation-name:confirm;
+    -webkit-animation-duration:5s;
+    animation-name:confirm;
+    animation-duration:5s;
+    animation-iteration-count:infinite;
+    animation-timing-function:linear;
+}
+
+.chapter h1, .chapter h2, .chapter h3, .chapter h4, .chapter h5, .chapter h6 {
+    font-size: 1.5em;
+    line-height: 1.1em;
+}
+
+@keyframes confirm {
+    0% {
+    background-color:black;
+    opacity:1;
+    }
+
+    90% {
+    background-color:black;
+    opacity:0.7;
+    }
+
+    100% {
+    background-color:#FFF;
+    opacity:0;
+    }
+}
+
+.toggleButton {
+    display:block;
+    width: 4vh;
+    height: 4vh;
+    border:.1vw solid;
+    border-radius:50%;
+    /* margin:0 8vw; */
+}
+
+.toggleButton span:after,.toggleButton span:before, .markReadButton span:after, .markReadButton span:before {
+    content:"";
+    position:absolute;
+    left:0;
+    top: .75vh;
+    width:100%;
+    height: .7vh;
+    background-color:#000;
+    transition:all .3s;
+    backface-visibility:hidden;
+    border-radius: 0.35vh;
+    transform: rotate(-45deg) translate(-0.7vh,0.7vh);
+}
+
+.markReadButton span:after {
+    transform: rotate(59deg) translate(4.1vh,0.1vh);
+    width: 30%;
+}
+
+.markReadButton span:before {
+    transform: rotate(-66deg) translate(-1.35vh,3vh);
+    width: 62%;
+}
+
+.markReadButton span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 7.5vh;
+    height: 7.5vh;
+    transform: translate(-50%, -50%);
+}
+
+.toggleButton span {
+    position: relative;
+    display: block;
+}
+
+.toggleButton span:after {
+    top: 2.75vh;
+    transform: rotate(45deg) translate(-0.7vh,-0.7vh);
+}
+
+.toggleButton.on span:before {
+    transform: rotate(-60deg) translate(-0.2vh,0.6vh);
+    width: 118%;
+}
+
+.toggleButton.on span:after {
+    transform: rotate(59deg) translate(-0.3vh,-0.6vh);
+    width:49%;
+}
+
+.active {
+    box-shadow: #000000 0 0 1vh -.3vh,inset black 0 0 1vh -0.3vh;
+}
+
+.flexRow {
+    justify-content:space-between;
+    align-items:center;
+    display:flex;
+    flex-direction:row;
+    width:90%;
+    margin:1vh 0;
+}
+
+.flexCol {
+    justify-content:space-around;
+    align-items:center;
+    display:flex;
+    flex-direction:column;
+}
+
+ul.list {
+    width:50%;
+    list-style:none;
+    height:3vh;
+    overflow:hidden;
+    position:relative;
+    margin: 1vh 0;
+    padding:2vh 0;
+    border: black solid 0.3vh;
+    text-align: center;
+}
+
+.list li {
+    line-height:3vh;
+}
+
+ul.list:after {
+    content:'';
+    position:absolute;
+    box-shadow:inset 0 -31.5vh 4vh -30vh black, inset 0 30.5vh 5vh -30vh #000;
+    left:0;
+    top:0;
+    bottom:0;
+    right:0;
+    z-index:1000;
+}
+
+ul.full, div.full {
+    width: 90%;
+}
+
+.markReadButton {
+    display: block;
+    height: 10vh;
+    width: 10vh;
+    background: green;
+    position: fixed;
+    bottom: 0;
+    right: 0vh;
+    margin-left: 80vw;
+    cursor: pointer;
+    border-top-left-radius: 25%;
+}
+
+.inactive {
+    color: #676767;
+    background: #ececec;
+}
+
+.storypicker1, .chapterpicker1, .chapterpicker2 {
+    width: 25vw;
+}
+
+.messageBody {
+    z-index: 99999;
+    font-size: 3vh;
+    position: absolute;
+    word-wrap: break-word;
+    text-align: justify;
+    top: 0;
+    left: 0;
+    background: #fffec7;
+    height: 5vh;
+    width: 100vw;
+}
+
+.closeButton{
+    position:absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 5%;
+    z-index: 9999;
+    width: 3vh;
+    height: 4vh;
+    cursor: pointer;
+}
+.closeButton:after, .closeButton:before{
+    content:"";
+    position:absolute;
+    left:0;
+    top: 0.75vh;
+    width:100%;
+    height: .4vh;
+    background-color:#000;
+    transition:all .3s;
+    backface-visibility:hidden;
+    border-radius: 0.35vh;
+    transform: rotate(-45deg) translate(-0.7vh,0.7vh);
+}
+.closeButton:after{
+    top: 2.75vh;
+    transform: rotate(45deg) translate(-0.7vh,-.7vh);
+}
+.closeButton div {
+    width: 7vh;
+    height: 7vh;
+    content: "";
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    border-radius: 50%;
+}
+
+.fullWidth {
+    width: 100% !important;
+}
+
+li {
+    margin-top: 0px;
+}
+
+/*
+*
+*   Console
+*
+*/
+
+.popout {
+    width: 90vw;
+    height: 80vh;
+    background: white;
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9000;
+    box-shadow: black 0 0.5vh 3vh -0.5vh;
+}
+
+.connection {
+    height: 8vh;
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
+    display: flex;
+}
+
+.status {
+    border-radius: 3vh;
+    height: 5vh;
+    width: 20vh;
+    margin: 1vh;
+    font-size: 4vh;
+    text-align: center;
+    line-height: 5vh;
+    display: inline-block;
+    flex-shrink:0;
+}
+
+.arrow {
+    height: 0.5vh;
+    width: 4vw;
+    background: black;
+    display: inline-block;
+    margin: 0.6vh 0;
+    position: relative;
+    align-self: flex-start;
+    /* animation: grow 5s linear infinite; */
+}
+
+.arrowhead {
+    background: black;
+    height: 0;
+    width: 0;
+    border-top: 1vh solid white;
+    border-bottom: 1vh solid white;
+    border-left: 2vh solid black;
+    position: absolute;
+    right: 0;
+    top: -0.75vh;
+}
+
+.server {
+    height: 5vh;
+    width: 20vh;
+    min-width: 20vh;
+    border-radius: 3vh;
+    margin: 1vh;
+    font-size: 4vh;
+    text-align: center;
+    line-height: 5vh;
+    flex-shrink:0;
+}
+
+.back.arrowhead {
+    border-top: 1vh solid white;
+    border-bottom: 1vh solid white;
+    border-right: 2vh solid black;
+    border-left: 0;
+    left: 0vh;
+}
+
+.arrows {
+    width: 70vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink:1;
+    position: relative;
+}
+.arrow.back {
+    align-self: flex-end;
+}
+
+.animated {
+    animation: 1s grow linear infinite;
+}
+
+@keyframes grow {
+    from {width:0%}
+    to {width:100%}
+}
+
+.completed {
+    width: 100%;
+}
+
+.red {
+    background: red;
+}
+
+.green {
+    background: green;
+}
+
+.yellow {
+    background: #ffdd38;
+}
+.output {
+    max-height: 50vh;
+    padding: 0 5%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.output p {
+    padding: 2px;
+    margin: 0px;
+    font-size: 1.4vh;
+}
+.console h3 {
+    text-align: center;
+    margin: 1vh 0 0.25vh 0;
+    font-size: 3vh;
+}
+#hideConsole {
+    bottom: 0px;
+    position: absolute;
+    left: 10%;
+    padding: 2vh 0;
+}
+.arrows:before{
+    content: attr(data-content);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0%;
+    font-size: 2vh;
+}
+
+.loginForm{
+    border-radius: 1vh;
+    border: black solid 0.4vh;
+    padding: 3vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 30vh;
+    height: 26vh;
+    justify-content: space-between;
+}
+.margin-top-wide{
+    margin: 5vh 0 0;
+}
+.headline{
+    text-align: center;
+}
+#loginFrame{
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10001;
+    background: white;
+}
+
+.busy{
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.63);
+    z-index: 11000;
+    top: 0;
+    left: 0;
+}
+
+.busy > div {
+    position: absolute;
+    height: 10vh;
+    width: 40vw;
+    background: rgb(255, 255, 255);
+    z-index: 10000;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 2vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.busy p {
+    font-size: 4vh;
+}
+
+.loginForm input, .loginForm button, .loginForm {
+    font-size: 2.5vh;
+}
+
+#subsList.sublist {
+    padding: 0;
+    justify-content: space-around;
+}
+
+#menu #subsList.sublist > li {
+    box-shadow: none;
+    margin: 0.75vh 3vh;
+    overflow: visible;
+    width: 25vh;
+    flex-grow: 0;
+}
+#subsList .flexRow{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.refresh {
+    bottom: 16vh;
+    margin: 0;
+    right: 3vw;
+    font-size: 4vh;
+    text-align: center;
+    line-height: 7.5vh;
+    width: auto;
+    border-radius: 4vh;
+    padding: 0 2vh;
+    z-index: 1001;
+    display: block;
+    height: 7.5vh;
+    background: green;
+    position: absolute;
+    box-shadow: 1vh 1vh 2vh -0.2vh;
+    cursor: pointer;
+}
+
+.absoluteCentered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
