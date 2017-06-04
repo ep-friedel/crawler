@@ -2,7 +2,7 @@
 
 'use strict';
 let pastBody = '',
-    version = 'v5',
+    version = 'v6',
     jwt,
     offline = new Response(new Blob(), {status: 279}),
     staticContent = [

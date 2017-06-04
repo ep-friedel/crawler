@@ -854,7 +854,7 @@ front.methods.logout = () => {
 };
 
 front.methods.markRead = (item) => {
-    front.vars.refreshedChapterList = front.vars.refreshedChapterList.filter(refitem => (refitem.short === item.short && refitem.Chapter === item.Chapter));
+    front.vars.refreshedChapterList = front.vars.refreshedChapterList.filter(refitem => (refitem.short !== item.short && refitem.Chapter !== item.Chapter));
 
     item.read = true;
     front.serverActions.markRead(item)
