@@ -41,6 +41,7 @@ front = {
     ,   loadingState: {}
     ,   notificationSettings: {}
     ,   reference: {}
+    ,   refreshedChapterList: []
     ,   startTrans: 0
     ,   startX: 0
     ,   startY: 0
@@ -315,7 +316,7 @@ front.handler.menu.toggleMinimizedSound = (event) => {
             .catch(() => {
                 front.handler.menu.toggleMinimized(eventClone);
                 busy.remove();
-            })
+            });
     }
 
     front.handler.menu.toggleMinimized(eventClone);
@@ -1725,7 +1726,7 @@ front.serverActions.getNewToken = () => {
                 switch(http.status) {
                     case 200:
                     case 279:
-                        let res = JSON.parse(http.response)
+                        let res = JSON.parse(http.response);
                         front.vars.user = JSON.parse(atob(res.token.split('.')[1]));
                         front.vars.jwt =  res.token;
                         localStorage.jwt = res.token;
@@ -1928,7 +1929,7 @@ front.initLoadingCircle = (arr) => {
                 loadingCircleContent.remove();
             }
         }).catch(err => console.log(err));
-}
+};
 
 front.registerListeners = () => {
     const h = front.handler,
