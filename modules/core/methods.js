@@ -25,6 +25,7 @@ function methods (back) {
         error = [],
         crawlerError = 0;
 
+
     m.addSeries = (param) => {
         let vars = m.escapeArray(['name', 'short', 'rss', 'url1', 'url2', 'chapter', 'book', 'url3', 'bookChapterReset', 'currentLink', 'minChapterLength'], param);
 
