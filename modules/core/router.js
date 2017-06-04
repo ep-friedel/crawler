@@ -7,7 +7,7 @@ function router(back) {
         ,   server_ip_address = process.env.CRAWLER_IP || 'localhost'
         ,   fs = require('fs')
         ,   auth = require(process.env.CRAWLER_HOME + 'modules/auth/jwt')
-        ,   hmac = require(process.env.CRAWLER_HOME + 'modules/auth/hmac')(process.env.CRAWLER_SECRET, 'X-Hub-Signature')
+        ,   hmac = require(process.env.CRAWLER_HOME + 'modules/auth/hmac')(process.env.GITHUB_SECRET, 'X-Hub-Signature')
         ,   https = require('https')
 
         ,   h = back.handler
