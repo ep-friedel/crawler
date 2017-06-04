@@ -31,6 +31,12 @@ function registerHandlers(back) {
 		return (userError) ? userError : m.getNewChapterList(userObject);
 	};
 
+	h.getNotificationSettings = (userObject) => {
+		m.log(2, 'h:getNotificationSettings', userObject.user);
+
+		return m.getNotificationSettings(userObject);
+	};
+
 	h.getStatus = () => {
 		return m.status();
 	};
@@ -77,20 +83,6 @@ function registerHandlers(back) {
 		}
 	};
 
-	h.getNotificationSettings = (userObject) => {
-		m.log(2, 'h:getNotificationSettings', userObject.user);
-
-		return m.getNotificationSettings(userObject);
-	};
-
-	h.setNotificationSettings = (param, userObject) => {
-		m.log(2, 'h:setNotificationSettings', param, userObject.user);
-
-		let userError = testForUserObjectError(userObject);
-
-		return (userError) ? userError :  m.setNotificationSettings(param, userObject);
-	};
-
 	h.requestChapter = (param, userObject) => {
 		m.log(2, 'h:request Chapter', param);
 
@@ -129,6 +121,14 @@ function registerHandlers(back) {
 		return m.setLogLevel(param.Level);
 	};
 
+	h.setNotificationSettings = (param, userObject) => {
+		m.log(2, 'h:setNotificationSettings', param, userObject.user);
+
+		let userError = testForUserObjectError(userObject);
+
+		return (userError) ? userError :  m.setNotificationSettings(param, userObject);
+	};
+
 	h.subscribeSeries = (param, userObject, del) => {
 		m.log(2, 'h:subscribeSeries', param, userObject.user, del);
 
@@ -136,6 +136,12 @@ function registerHandlers(back) {
 
 		return (userError) ? userError :  m.subscribeSeries(param, userObject, del);
 	};
+
+	h.triggerBuild = (secret) => {
+		m.log(2, 'h:subscribeSeries', secret);
+
+		m.triggerBuild();
+	}
 
 	function testForUserObjectError(userObject) {
 		if (userObject && userObject.user){

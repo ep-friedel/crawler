@@ -182,7 +182,7 @@ function userDB (back) {
 
     q.updateUserSettings = (param) => {
         return new Promise((resolve, reject) => {
-            userDb.query('UPDATE `' + settingsDB + '`.`users` SET `user` = "' + param.user + '", `password` = "' + param.password + '", `role` = "' + param.role + '", `silent` = "' + param.silent + '", `vibrate` = "' + param.vibrate + '" WHERE `id` = "' + param.id + '";',
+            userDb.query('UPDATE `' + settingsDB + '`.`users` SET `user` = "' + param.user + '", `password` = "' + param.password + '", `role` = "' + param.role + '", `silent` = "' + param.silent + '" WHERE `id` = "' + param.id + '";',
                 (err, result) => {
                     if (err) {
                         reject(err);

@@ -7,6 +7,7 @@ function router(back) {
         ,   server_ip_address = process.env.CRAWLER_IP || 'localhost'
         ,   fs = require('fs')
         ,   auth = require(process.env.CRAWLER_HOME + 'modules/auth/jwt')
+        ,   hmac = require(process.env.CRAWLER_HOME + 'modules/auth/hmac')(process.env.CRAWLER_SECRET, 'X-Hub-Signature')
         ,   https = require('https')
 
         ,   h = back.handler
@@ -244,6 +245,12 @@ function router(back) {
     app.post('/api/messageKey', a.isLoggedInAPI, (req, res) => {
         m.log(2, 'API:post:messageKey', (o.log >= 11) ? req : "");
         h.messageKey(req.body, req.user, req.method);
+        res.status(200).send();
+    });
+
+    app.post('/api/triggerBuild', hmac, (req, res) => {
+        m.log(2, 'API:post:triggerBuild', (o.log >= 11) ? req : "");
+        h.triggerBuild();
         res.status(200).send();
     });
 

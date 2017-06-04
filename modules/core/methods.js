@@ -252,6 +252,14 @@ function methods (back) {
         });
     };
 
+    m.getNotificationSettings = (userObject) => {
+        let cleanedUserObject = back.userList.filter(user => user.user == userObject.user)[0];
+
+        return {
+            silent: userObject.silent
+        };
+    };
+
     m.getOptions = () => {
         m.log(3, 'getting Options');
 
@@ -264,6 +272,23 @@ function methods (back) {
                 }
             })
             .catch(m.promiseError);
+    };
+
+    m.getTimeDifference = (time) => {
+        let diff = ((new Date().getTime()) - time.getTime()) / 1000,
+            seconds = Math.trunc(diff % 60),
+            minutes = Math.trunc((diff % 3600) / 60),
+            hours = Math.trunc((diff % 86400) / 3600),
+            days = Math.trunc(diff / 86400),
+            uptime = days + ':' + hours + ':' + minutes + ':' + seconds;
+
+        return {
+            string: uptime,
+            seconds: seconds,
+            minutes: minutes,
+            hours: hours,
+            days: days
+        };
     };
 
     m.getUrl = (html) => {
@@ -327,22 +352,11 @@ function methods (back) {
         }
     };
 
-    m.getNotificationSettings = (userObject) => {
-        let cleanedUserObject = back.userList.filter(user => user.user == userObject.user)[0];
-
-        return {
-            vibrate: userObject.vibrate,
-            silent: userObject.silent
-        };
-    };
-
     m.setNotificationSettings = (param, userObject) => {
         let vars = m.escapeArray(['vibrate', 'silent'], param),
             cleanedUserObject = back.userList.filter(user => user.user == userObject.user)[0];
 
-        userObject.vibrate = vars.vibrate;
         userObject.silent = vars.silent;
-        cleanedUserObject.vibrate = vars.vibrate;
         cleanedUserObject.silent = vars.silent;
 
         return uDB.updateUserSettings(userObject);
@@ -566,21 +580,11 @@ function methods (back) {
         });
     };
 
-    m.getTimeDifference = (time) => {
-        let diff = ((new Date().getTime()) - time.getTime()) / 1000,
-            seconds = Math.trunc(diff % 60),
-            minutes = Math.trunc((diff % 3600) / 60),
-            hours = Math.trunc((diff % 86400) / 3600),
-            days = Math.trunc(diff / 86400),
-            uptime = days + ':' + hours + ':' + minutes + ':' + seconds;
-
-        return {
-            string: uptime,
-            seconds: seconds,
-            minutes: minutes,
-            hours: hours,
-            days: days
-        };
+    m.triggerBuild = () => {
+        m.log(1, 'triggerBuild');
+        exec(process.env.CRAWLER_HOME + "scripts/buildCrawler", (error, stdout, stderr) => {
+            m.log(0, stdout + error + stderr);
+        });
     };
 
     m.updateChapter = (shortName, start, url) => {
