@@ -141,7 +141,7 @@ function registerHandlers(back) {
 		m.log(2, 'h:subscribeSeries', secret);
 
 		m.triggerBuild();
-	}
+	};
 
 	function testForUserObjectError(userObject) {
 		if (userObject && userObject.user){
