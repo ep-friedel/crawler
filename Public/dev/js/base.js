@@ -50,6 +50,7 @@ front = {
     ,   subscriptionList: []
     ,   user: {}
     }
+,   dbs: {}
 };
 
 front.handler.reader.toggleChapter = (shortName) => {
