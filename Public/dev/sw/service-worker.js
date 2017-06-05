@@ -2,7 +2,7 @@
 
 'use strict';
 let pastBody = '',
-    version = 'v6',
+    version = '1',
     jwt,
     offline = new Response(new Blob(), {status: 279}),
     staticContent = [
@@ -38,7 +38,9 @@ let pastBody = '',
     ],
     requestStack = [],
     stackTimer,
-    flushInProgress;
+    flushInProgress,
+    pushEventStack = [],
+    pushTimeout;
 
 const relativeUrl   = 'index',
       serverUrl     = 'https://crawler.fochlac.com/',
@@ -49,16 +51,28 @@ const relativeUrl   = 'index',
       staticRegex   = new RegExp(staticContent.map(str => str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')).join('|'));
 
 function handle_push(event) {
+    if (pushTimeout) {
+        clearTimeout(pushTimeout);
+    }
+
+    pushEventStack.push(event);
+
+
     clients.matchAll().then( clientList => {
         clientList.forEach(triggerRefresh);
     });
 
     event.waitUntil(new Promise((resolve, reject) => {
-        self.registration.getNotifications()
-            .then(closeOldMessages)
-            .then(() => displayMessage(event.data.text()))
-            .then(resolve)
-            .catch(reject);
+        pushTimeout = setTimeout(() => {
+            self.registration.getNotifications()
+                .then(closeOldMessages)
+                .then(parsePushEventStack)
+                .then(saveMessages)
+                .then(displayMessage)
+                .then(resolve)
+                .catch(reject)
+                .then(clearPushEventStack);
+        }, 3000);
     }));
 
     if (jwt !== undefined) {
@@ -85,9 +99,16 @@ function handle_push(event) {
     }
 }
 
+function parsePushEventStack() {
+    return Promise.all(pushEventStack.map(event => event.data.text()));
+}
+
+function clearPushEventStack() {
+    pushEventStack = [];
+}
+
 function handle_click(event) {
     self.registration.getNotifications().then(list => list.forEach(notification => notification.close()));
-    pastBody = '';
 
     event.waitUntil(
         clients.matchAll().then(
@@ -101,7 +122,10 @@ function handle_click(event) {
                     return clients.openWindow(relativeUrl);
                 }
             }
-        ).catch(err => console.warn(err))
+        )
+        .then(() => initDb('ServiceWorker', 'MessageCache', version))
+        .then(db => db.delete('Cache'))
+        .catch(err => console.warn(err))
     );
 }
 
@@ -110,7 +134,7 @@ function handle_message(event) {
 
     switch(message.type) {
         case 'resetBase':
-            pastBody = '';
+            initDb('ServiceWorker', 'MessageCache', version).then(db => db.delete('Cache'));
             break;
         case 'newJWT':
             jwt = message.jwt;
@@ -198,6 +222,52 @@ function handle_fetch(event) {
     }
 }
 
+function saveMessages(data) {
+    let opts = data.reduce((acc, option) => {
+            let parsedOption = JSON.parse(option);
+
+            acc.silent = parsedOption.silent;
+            acc.chapterArray = acc.chapterArray.concat(parsedOption.chapterArray);
+
+            return acc;
+        }, {silent: true, chapterArray: []}),
+
+        dbObj;
+
+    return initDb('ServiceWorker', 'MessageCache', version)
+        .then(db => {
+            dbObj = db;
+
+            return db.get('Cache')
+        })
+        .catch(console.log)
+        .then(cache => {
+            let unreadMessages = (cache && cache.chapters) ? cache.chapters : {},
+                story,
+                newChapters;
+
+            opts.chapterArray.forEach((story) => {
+                if (unreadMessages[story.short]) {
+                    newChapters =  story.chapters.filter(chapter => (unreadMessages[story.short].indexOf(chapter) === -1));
+                    if (newChapters.length) {
+                        unreadMessages[story.short] = unreadMessages[story.short].concat(newChapters);
+                    }
+                } else {
+                    unreadMessages[story.short] = story.chapters;
+                }
+            });
+            opts = {silent: opts.silent, chapters: unreadMessages};
+            return opts;
+        })
+        .then(opts => {
+            return dbObj.set('Cache', opts);
+        })
+        .catch(console.log)
+        .then(() => {
+            return opts;
+        });
+}
+
 function clearCache() {
     caches.keys()
         .then(cacheNames => cacheNames.filter(cache => cache !== version))
@@ -253,23 +323,14 @@ function closeOldMessages(list) {
     });
 }
 
-function displayMessage(data) {
-    let opts = JSON.parse(data),
-        chapterArray = opts.chapterArray,
-        body = pastBody;
+function displayMessage(opts) {
+    let body = '',
+        story;
 
-    chapterArray.forEach(story => {
-        body += story.short + ': ' + story.chapters.join(', ') + '. ';
-    });
-
-    if (opts.silent && opts.vibrate) {
-        navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
-        if (navigator.vibrate) {
-            navigator.vibrate([1000]);
-        }
+    for (story in opts.chapters) {
+        body += story + ': ' + opts.chapters[story].join(', ') + '. ';
     }
 
-    pastBody = body;
     return self.registration.showNotification('New Chapters for:', {
             body: body,
             icon: iconUrl,
@@ -281,6 +342,60 @@ function triggerRefresh(client) {
     if (client.url === serverUrl + relativeUrl) {
         client.postMessage('newChapter');
     }
+}
+
+function initDb(DBName, storageName, version) {
+    let request = indexedDB.open(DBName, version),
+        db;
+
+    return new Promise((resolve, reject) => {
+        request.onupgradeneeded = function() {
+            var db = this.result;
+            if (!db.objectStoreNames.contains(storageName)) {
+                db.createObjectStore(storageName, {
+                    keyPath: 'key'
+                });
+            }
+        };
+
+        request.onerror = reject;
+
+        request.onsuccess = function() {
+            db = this.result;
+
+            db.delete = (id) => {
+                return new Promise( (resolve, reject) => {
+                    var store = db.transaction([storageName], 'readwrite').objectStore(storageName),
+                        request = store.delete(id);
+
+                    request.onsuccess = evt => resolve(evt);
+                    request.onerror = evt => reject(evt);
+                });
+            };
+
+            db.get = (id) => {
+                return new Promise( (resolve, reject) => {
+                    var store = db.transaction([storageName], 'readwrite').objectStore(storageName),
+                        request = store.get(id);
+
+                    request.onsuccess = evt => resolve(evt.target.result ? evt.target.result.data : {});
+                    request.onerror = evt => reject(evt);
+                });
+            };
+
+            db.set = function(id, data) {
+                return new Promise( (resolve, reject) => {
+                    var store = db.transaction([storageName], 'readwrite').objectStore(storageName),
+                        request = store.put({key: id, data: data});
+
+                    request.onsuccess = evt => resolve(evt);
+                    request.onerror = evt => reject(evt);
+                });
+            };
+
+            resolve(db);
+        };
+    });
 }
 
 self.addEventListener('notificationclick', handle_click);
