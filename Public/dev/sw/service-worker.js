@@ -81,21 +81,23 @@ function handle_push(event) {
             url,
             reqArr = [],
             newReq;
-        caches.open(version)
-        .then(function(cache) {
-            chapterArray.forEach(story => {
-                story.chapters.forEach((chapter) => {
-                    url = apiUrl + 'api/requestChapter?short=' + story.short + '&chapter=' + chapter + '&addToNew=false';
-                    newReq = new Request(url, {headers: new Headers({jwt: jwt})});
-                    reqArr.push(newReq);
-                });
+
+        chapterArray.forEach(story => {
+            story.chapters.forEach((chapter) => {
+                let chapterText;
+
+                url = apiUrl + 'api/requestChapter?short=' + story.short + '&chapter=' + chapter + '&addToNew=false';
+                newReq = new Request(url, {headers: new Headers({jwt: jwt})});
+                fetch(newReq)
+                    .then(req => req.text())
+                    .then(text => {
+                        chapterText = text;
+                        return initDb('Chapters', story.short, version)
+                    })
+                    .then(db => db.set(chapter, chapterText))
+                    .catch(console.error);
             });
-
-            Promise.all(reqArr.map(req => cache.delete(req)))
-                .then(() => cache.addAll(reqArr))
-                .catch(err => console.warn(err));
-
-        }).catch(err => console.warn(err));
+        });
     }
 }
 
