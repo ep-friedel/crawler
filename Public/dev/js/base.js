@@ -1801,7 +1801,7 @@ front.serverActions.requestChapter = (item, addToNew) => {
     let chapterDbController;
 
     if (!front.dbs[item.short]) {
-        front.dbs[item.short] = initDb('Chapters', story.short, front.vars.version)
+        front.dbs[item.short] = front.tools.initDb('Chapters', story.short, front.vars.version)
     }
 
     return new Promise((resolve, reject) => {
