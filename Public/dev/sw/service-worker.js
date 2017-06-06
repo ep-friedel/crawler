@@ -1,7 +1,7 @@
 /*global Response, Blob, clients, self, caches, Request, Headers, console, fetch, navigator, setInterval, clearInterval, clearTimeout, setTimeout, indexedDB */
 
 'use strict';
-let version = '9',
+let version = '1',
     jwt,
     offline = new Response(new Blob(), {status: 279}),
     staticContent = [
