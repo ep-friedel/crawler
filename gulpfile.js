@@ -13,12 +13,15 @@ var jshint = require('gulp-jshint'),
 gulp.task('cleanjsbase', function() {
     return del(['./Public/live/js/']);
 });
+
 gulp.task('cleanjssw', function() {
     return del(['./Public/live/sw/']);
 });
+
 gulp.task('cleancss', function() {
     return del(['./Public/live/css/']);
 });
+
 gulp.task('cleanhtml', function() {
     return del(['./live/']);
 });
