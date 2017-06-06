@@ -96,9 +96,9 @@ h5 {
     text-align: center;
     border-bottom: solid black 1px;
     margin: 0;
-    box-shadow: black 0 0.5vh 3vh -0.5vh;
     cursor: pointer;
     font-size: 5vh;
+    border-bottom: solid #67573d 0.3vh;
 }
 .iconCounter {
     margin-left: 1vw;
@@ -139,7 +139,6 @@ h5 {
     background: transparent;
     transition: max-height 0.25s;
     color: #f9f1e2;
-    box-shadow: #000000 0 0.5vh 3vh -0.5vh;
 }
 #menu.show{
     max-height: 100%;
@@ -196,13 +195,13 @@ h5 {
     min-width: auto;
     width: 60vh;
     flex-grow: 1;
-    box-shadow:#000 0 .5vh 3vh -1vh;
     border-radius:.5vh;
     overflow:hidden;
     margin:1.25vh 2.5vw;
     padding:0;
     background: #f9f1e2;
     color: #67573d;
+    border: 1px solid #67573d;
 }
 
 li.minimized:before {
@@ -243,7 +242,6 @@ li.minimized > p{
     cursor: pointer;
     height:3vh;
     text-align:center;
-    box-shadow:0 1vh 3vh -2vh;
     margin:1vh 0;
     padding:1vh 0;
 }
@@ -256,13 +254,13 @@ li.minimized > p{
     padding:2vh 0;
 }
 
-.action:active {
-    box-shadow:inset 0 1vh 2vh -1.5vh #909090, inset 1vh 0 2vh -1.5vh #585858, inset 0 -1vh 2vh -1.5vh #505050, inset -1vh 0 2vh -1.5vh #a5a5a5;
+.action:hover,
+.minimized:hover {
+    background: rgba(230, 214, 158, 0.25);
 }
 
 .button {
     display:inline-block;
-    box-shadow:#000 .5vh .5vh 2vh -.2vh;
     border-radius:.3vh;
     width:80%;
     margin:.5vh 0 2vh;
@@ -270,9 +268,6 @@ li.minimized > p{
     text-align: center;
 }
 
-.button:active {
-    box-shadow:#000 .2vh .2vh 2vh -.7vh;
-}
 
 .confirm:after {
     content:'Confirm Action?';
@@ -364,10 +359,6 @@ li.minimized > p{
     width:49%;
 }
 
-.active {
-    box-shadow: #000000 0 0 1vh -.3vh,inset black 0 0 1vh -0.3vh;
-}
-
 .flexRow {
     justify-content:space-between;
     align-items:center;
@@ -403,7 +394,6 @@ ul.list {
 ul.list:after {
     content:'';
     position:absolute;
-    box-shadow:inset 0 -31.5vh 4vh -30vh black, inset 0 30.5vh 5vh -30vh #000;
     left:0;
     top:0;
     bottom:0;
@@ -458,7 +448,6 @@ ul.full, div.full {
     padding: 0;
     width: 100%;
     height: 7vh;
-    box-shadow: #000 0 1vh 2.5vh 0.7vh;
     position: absolute;
 }
 .messageBody a {
@@ -469,7 +458,6 @@ ul.full, div.full {
     padding: 0vh 1.5vh;
     border-radius: 0.5vh;
     cursor: pointer;
-    box-shadow: 0.2vh 0.2vh 1vh -0.2vh black;
 }
 .messageBody a:hover {
     background: whitesmoke
@@ -579,7 +567,7 @@ li {
     background: #f9f1e2;
     color: #67573d;
     border: solid 0.3vh;
-    box-shadow: 0.5vh 0.5vh 3vh -0.5vh black;
+    box-shadow: 0vh 0vh 3vh -0.5vh black;
     z-index: 10000;
     top: 50%;
     left: 50%;
@@ -732,6 +720,12 @@ li {
 }
 
 @media (min-aspect-ratio: 4/3) {
+    .messageActive #menu.show {
+        height: 7vh;
+    }
+    #menu.show {
+        max-height: 7vh;
+    }
     .head{
         color: #f9f1e2;
         font-size: 0;
@@ -765,9 +759,8 @@ li {
     #menuWrapper {
         background: #f9f1e2;
         width: 80vh;
-        border-left: 0.4vh solid #67573d;
+        border-right: 0.3vh solid #67573d;
         height: 93vh;
-        box-shadow: #000000 0 0.5vh 3vh -0.5vh;
         position: absolute;
         left: -76vh;
         transition: 0.3s linear;
