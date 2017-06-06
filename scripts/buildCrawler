@@ -2,7 +2,7 @@
 cd /home/crawler
 
 git fetch
-changed_files="$(git diff -r --name-only master origin/master | grep 'modules/')"
+changed_files="$(git diff -r --name-only master origin/master | grep -E '^modules\/|dev/.*\.html')"
 git reset --hard origin/master
 
 if [ ${#changed_files} -eq 0 ]
