@@ -146,6 +146,7 @@ h5 {
 .menuHead{
     background: #67573d;
     height: 7vh;
+    border-bottom: 0.3vh solid #42341e;
 }
 #menuHead{
     float: right;
@@ -255,7 +256,7 @@ li.minimized > p{
 }
 
 .action:hover,
-.minimized:hover {
+#menu li.minimized:hover {
     background: rgba(230, 214, 158, 0.25);
 }
 
@@ -675,7 +676,7 @@ li {
 .readerMode .head {
     color: #f9f1e2;
     background: #67573d;
-    border-bottom: 0px;
+    border-bottom: 0.3vh solid #42341e;
 }
 .readerMode .markReadButton {
     background: #f9f1e2;
