@@ -295,7 +295,7 @@ front.handler.menu.toggleMinimizedSound = (event) => {
         },
         busy;
 
-    if (front.vars.notificationSettings.silent === undefined || front.vars.notificationSettings.vibrate === undefined) {
+    if (front.vars.notificationSettings.silent === undefined) {
         busy = new front.proto.busyLayer({
             target: eventClone.currentTarget.parentElement,
             message: 'Loading'
@@ -309,10 +309,6 @@ front.handler.menu.toggleMinimizedSound = (event) => {
                 if (front.vars.notificationSettings.silent) {
                     front.el.toggleSound.classList.remove('fa-check');
                     front.el.toggleSound.classList.add('fa-times');
-                }
-                if (!front.vars.notificationSettings.vibrate) {
-                    front.el.toggleVibrate.classList.remove('fa-check');
-                    front.el.toggleVibrate.classList.add('fa-times');
                 }
                 busy.remove();
             })
@@ -360,28 +356,6 @@ front.handler.menu.toggleSound = (event) => {
         item.classList.add('fa-check');
         item.classList.remove('fa-times');
         front.vars.notificationSettings.silent = 0;
-    }
-    front.serverActions.setNotificationSettings()
-    .then(busy.remove);
-};
-
-front.handler.menu.toggleVibrate = (event) => {
-    let item = event.currentTarget,
-        busy = new front.proto.busyLayer({
-            target: front.el.sound,
-            message: 'Loading'
-        });
-
-    busy.init();
-
-    if (item.classList.contains('fa-check')) {
-        item.classList.remove('fa-check');
-        item.classList.add('fa-times');
-        front.vars.notificationSettings.vibrate = 0;
-    } else {
-        item.classList.add('fa-check');
-        item.classList.remove('fa-times');
-        front.vars.notificationSettings.vibrate = 1;
     }
     front.serverActions.setNotificationSettings()
     .then(busy.remove);
@@ -1083,10 +1057,31 @@ front.methods.resetCache = () => {
 };
 
 front.methods.resetStorage = () => {
-    let jwt = localStorage.jwt;
+    let subscriptionList,
+        busy = new front.proto.busyLayer({
+            target: document.getElementById('resetStorage'),
+            message: 'Deleting'
+        });
 
-    localStorage.clear();
-    localStorage.jwt = jwt;
+    busy.init();
+
+    if (!front.vars.subscriptionList.length) {
+        subscriptionList = front.serverActions.getSubscriptionList();
+
+        subscriptionList.then(() => {
+            Promise.all(front.vars.subscriptionList.map(item => front.tools.initDb(item.short, 'Chapters')))
+            .then(dbs => Promise.all(dbs.map(db => db.deleteAll())))
+            .then(() => busy.remove())
+            .catch(() => busy.remove());
+        })
+
+        front.createSubscriptionList(subscriptionList);
+    } else {
+        Promise.all(front.vars.subscriptionList.map(item => front.tools.initDb(item.short, 'Chapters')))
+        .then(dbs => Promise.all(dbs.map(db => db.deleteAll())))
+        .then(() => busy.remove())
+        .catch(() => busy.remove());
+    }
 };
 
 front.methods.sendMessageToSw = (message) => {
@@ -1884,7 +1879,7 @@ front.serverActions.setNotificationSettings = () => {
         http.onreadystatechange = () => {
             front.methods.defaultRequestHandling(http, resolve, reject);
         };
-        http.send('silent=' + front.vars.notificationSettings.silent + '&vibrate=' + front.vars.notificationSettings.vibrate);
+        http.send('silent=' + front.vars.notificationSettings.silent);
     });
 };
 
@@ -1946,6 +1941,24 @@ front.tools.initDb = (DBName, storageName, version) => {
                         request = store.delete(id);
 
                     request.onsuccess = evt => resolve(evt);
+                    request.onerror = evt => reject(evt);
+                });
+            };
+
+            db.deleteAll = () => {
+                return new Promise( (resolve, reject) => {
+                    var store = db.transaction([storageName], 'readwrite').objectStore(storageName),
+                        request = store.openCursor();
+
+                    request.onsuccess = evt => {
+                        let cursor = evt.target.result;
+                        if (cursor) {
+                            cursor.delete();
+                            cursor.continue();
+                        } else {
+                            resolve(evt);
+                        }
+                    }
                     request.onerror = evt => reject(evt);
                 });
             };
@@ -2070,7 +2083,6 @@ front.registerListeners = () => {
     document.querySelector('#status').firstElementChild.addEventListener('click', m.toggleMinimized);
     document.querySelector('#sound').firstElementChild.addEventListener('click', m.toggleMinimizedSound);
     document.querySelector('#toggleSound').addEventListener('click', m.toggleSound);
-    document.querySelector('#toggleVibrate').addEventListener('click', m.toggleVibrate);
     document.querySelector('#logoutButton').addEventListener('click', m.logout);
     document.querySelector('#reloadPageButton').addEventListener('click', m.fullReload);
     document.querySelector('#resetStorageButton').addEventListener('click', h.menu.resetStorage);
@@ -2114,7 +2126,9 @@ front.createSubscriptionList = (subscriptionList, busy) => {
         });
         lParent.appendChild(l);
         l.addEventListener('click', front.handler.menu.toggleSubscription);
-        busy.remove();
+        if (busy) {
+            busy.remove();
+        }
     }).catch(err => console.warn('createSubscriptionList error', err));
 };
 
