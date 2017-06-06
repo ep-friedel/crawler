@@ -402,6 +402,7 @@ ul.list:after,
     right: 1vh;
 }
 ul.list:before {
+    right: inherit;
     content: "\f0da";
     position: absolute;
     left: 1vh;
