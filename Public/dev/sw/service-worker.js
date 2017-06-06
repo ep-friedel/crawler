@@ -1,7 +1,7 @@
 /*global Response, Blob, clients, self, caches, Request, Headers, console, fetch, navigator, setInterval, clearInterval, clearTimeout, setTimeout, indexedDB */
 
 'use strict';
-let version = '8',
+let version = '9',
     jwt,
     offline = new Response(new Blob(), {status: 279}),
     staticContent = [
@@ -373,6 +373,24 @@ function initDb(DBName, storageName, version) {
                         request = store.delete(id);
 
                     request.onsuccess = evt => resolve(evt);
+                    request.onerror = evt => reject(evt);
+                });
+            };
+
+            db.deleteAll = () => {
+                return new Promise( (resolve, reject) => {
+                    var store = db.transaction([storageName], 'readwrite').objectStore(storageName),
+                        request = store.openCursor();
+
+                    request.onsuccess = evt => {
+                        let cursor = evt.target.result;
+                        if (cursor) {
+                            cursor.delete();
+                            cursor.continue();
+                        } else {
+                            resolve(evt);
+                        }
+                    }
                     request.onerror = evt => reject(evt);
                 });
             };
