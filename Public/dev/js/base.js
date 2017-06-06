@@ -1141,7 +1141,7 @@ front.methods.sortChaptersForLoading = (arr) => {
 
     return Promise.all(stories.map(story => {
             if (!front.dbs[story]) {
-                front.dbs[story] = front.tools.initDb(story, 'Chapters')
+                front.dbs[story] = front.tools.initDb(story, 'Chapters');
             }
 
             return front.dbs[story];
@@ -1830,7 +1830,7 @@ front.serverActions.requestChapter = (item, addToNew) => {
             url = front.options.server + '/api/requestChapter' + '?short=' + item.short + '&chapter=' + item.Chapter + '&addToNew=' + (addToNew ? addToNew : false);
 
     if (!front.dbs[item.short]) {
-        front.dbs[item.short] = front.tools.initDb(item.short, 'Chapters')
+        front.dbs[item.short] = front.tools.initDb(item.short, 'Chapters');
     }
 
     return new Promise((resolve, reject) => {

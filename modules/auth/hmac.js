@@ -14,5 +14,5 @@ module.exports = (secret, hashfield) => {
         } else {
             res.status(403).send();
         }
-    }
-}
+    };
+};

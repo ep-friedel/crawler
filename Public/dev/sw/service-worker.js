@@ -1,4 +1,4 @@
-/*global Response, Blob, clients, self, caches, Request, Headers, console, fetch, navigator, setInterval, clearInterval */
+/*global Response, Blob, clients, self, caches, Request, Headers, console, fetch, navigator, setInterval, clearInterval, clearTimeout, setTimeout, indexedDB */
 
 'use strict';
 let version = '8',
@@ -91,7 +91,7 @@ function handle_push(event) {
                     .then(req => req.text())
                     .then(text => {
                         chapterText = text;
-                        return initDb(story.short, 'Chapters')
+                        return initDb(story.short, 'Chapters');
                     })
                     .then(db => db.set(chapter, chapterText))
                     .catch(console.error);
@@ -242,7 +242,7 @@ function saveMessages(data) {
         .then(db => {
             dbObj = db;
 
-            return db.get('Cache')
+            return db.get('Cache');
         })
         .catch(console.log)
         .then(cache => {
@@ -415,7 +415,7 @@ function initDb(DBName, storageName, version) {
 
         };
     });
-};
+}
 
 self.addEventListener('notificationclick', handle_click);
 self.addEventListener('message', handle_message);
