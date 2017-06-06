@@ -1073,7 +1073,7 @@ front.methods.resetStorage = () => {
             .then(dbs => Promise.all(dbs.map(db => db.deleteAll())))
             .then(() => busy.remove())
             .catch(() => busy.remove());
-        })
+        }).catch(() => busy.remove());
 
         front.createSubscriptionList(subscriptionList);
     } else {
@@ -1958,7 +1958,8 @@ front.tools.initDb = (DBName, storageName, version) => {
                         } else {
                             resolve(evt);
                         }
-                    }
+                    };
+
                     request.onerror = evt => reject(evt);
                 });
             };

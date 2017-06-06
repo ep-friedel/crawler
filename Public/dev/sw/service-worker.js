@@ -390,7 +390,8 @@ function initDb(DBName, storageName, version) {
                         } else {
                             resolve(evt);
                         }
-                    }
+                    };
+
                     request.onerror = evt => reject(evt);
                 });
             };
