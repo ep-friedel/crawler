@@ -1350,7 +1350,7 @@ front.proto.picker = function(options, cb) {
             self.options.factor = options.factor || 1;
             self.options.frameClass = options.frameClass || 'frame';
             self.options.tagClass = options.tagClass || 'tag';
-            self.options.listClass = options.listClass || 'list fa';
+            self.options.listClass = options.listClass || 'list';
             self.options.tag = options.tag || '';
             self.options.dataprop = options.dataprop || false;
             self.options.data = options.data;
@@ -1366,7 +1366,7 @@ front.proto.picker = function(options, cb) {
 
         self.frame.className = self.options.frameClass;
         self.tag.className = self.options.tagClass;
-        self.list.className =  self.options.listClass;
+        self.list.className =  self.options.listClass + ' fa';
 
         self.target.appendChild(self.frame);
         self.frame.appendChild(self.tag);
