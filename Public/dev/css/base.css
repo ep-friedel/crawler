@@ -267,6 +267,7 @@ li.minimized > p{
     margin:.5vh 0 2vh;
     padding:2vh;
     text-align: center;
+    border: solid 1px #67573d;
 }
 
 
@@ -392,14 +393,18 @@ ul.list {
     line-height:3vh;
 }
 
-ul.list:after {
-    content:'';
-    position:absolute;
-    left:0;
-    top:0;
-    bottom:0;
-    right:0;
-    z-index:1000;
+ul.list:after,
+.list:before {
+    content: '\f0d9';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 1vh;
+}
+ul.list:before {
+    content: "\f0da";
+    position: absolute;
+    left: 1vh;
 }
 
 ul.full, div.full {
