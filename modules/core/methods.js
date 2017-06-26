@@ -1,5 +1,6 @@
 function methods (back) {
-    const   request     = require('cloudscraper')
+    const   cloudscraper= require('cloudscraper')
+        ,   request     = require('request')
         ,   exec        = require('child_process').execFile
         ,   fs          = require('fs')
         ,   logger      = require(process.env.CRAWLER_HOME + 'modules/log/logger')(back)
@@ -23,11 +24,12 @@ function methods (back) {
     let crawlSite = [],
         runningCrawls = false,
         error = [],
-        crawlerError = 0;
+        crawlerError = 0,
+        csrfToken;
 
 
     m.addSeries = (param) => {
-        let vars = m.escapeArray(['name', 'short', 'rss', 'url1', 'url2', 'chapter', 'book', 'url3', 'bookChapterReset', 'currentLink', 'minChapterLength'], param);
+        let vars = m.escapeArray(['name', 'short', 'rss', 'url1', 'url2', 'chapter', 'book', 'url3', 'bookChapterReset', 'currentLink', 'minChapterLength', 'bookId'], param);
 
         return Promise
             .all([cDB.createStoryTable(vars), cDB.insertStorySettings(vars)])
@@ -43,12 +45,15 @@ function methods (back) {
         back.refreshTimer = undefined;
     };
 
-    m.crawlByLink = (item, url, count) => {
-        m.log(5, 'crawlByLink: Site: ' + item.short + ', Url: ', url);
+    m.crawlByLink = (item) => {
         let newChapters = {
                 short: item.short,
                 chapters: []
-            };
+            },
+            url = item.currentLink,
+            count = item.start;
+
+        m.log(5, 'crawlByLink: Site: ' + item.short + ', Url: ', url);
 
         return new Promise((resolve, reject) => {
             function recursiveCrawlingFunction (item, url, count) {
@@ -57,7 +62,7 @@ function methods (back) {
                 if (typeof(url) !== 'string' || url === 'false') {
                     reject('no url');
                 } else {
-                    request.get(url, (err, res, pageContent) => {
+                    cloudscraper.get(url, (err, res, pageContent) => {
                         if (err !== null) {
                             reject('requesterror: '+ err);
                         }
@@ -97,18 +102,21 @@ function methods (back) {
         });
     };
 
-    m.crawlSite = (item, start, start2) => {
-        m.log(5, 'crawlSite: Site: ' + item.short + ', Chapter: ', start);
+    m.crawlSite = (item) => {
         let newChapters = {
                 short: item.short,
                 chapters: []
-            };
+            },
+            start = item.start,
+            start2 = item.start2;
+
+        m.log(5, 'crawlSite: Site: ' + item.short + ', Chapter: ', start);
 
         return new Promise((resolve, reject) => {
             function recursiveCrawlingFunction (item, start, start2) {
                 let url = item.url1 + ((start2 !== 'false') ? (start2 + item.url2 + start + item.url3) : (start + item.url2)),
                     content;
-                request.get(url, (err, res, pageContent) => {
+                cloudscraper.get(url, (err, res, pageContent) => {
                     if (err !== null) {
                         reject(err);
                         return;
@@ -181,6 +189,97 @@ function methods (back) {
         });
     };
 
+    m.crawlQuidan = (item) => {
+        let newChapters = {
+                short: item.short,
+                chapters: []
+            },
+            bookId = item.bookId;
+        return m.getQuidanToken()
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                cloudscraper.get(`https://www.webnovel.com/apiajax/chapter/GetChapterList?_csrfToken=${csrfToken}&bookId=${bookId}`, (err, res, content) => {
+                    if (err) {
+                        reject(err);
+                        return err;
+                    }
+                    m.log(5, 'crawlByLink: Site: ' + item.short + ', got ChapterList');
+
+                    let response = JSON.parse(content),
+                        data = response ? response.data : undefined,
+                        chapterNumber = data ? data.bookInfo.totalChapterNum : undefined,
+                        chapterList;
+                    if (response.code !== 0) {
+                        m.log(2, 'crawlByLink: Site: ' + item.short + ', Error requesting ChapterList: ', content);
+                        csrfToken = undefined;
+                        reject(content);
+
+                    } else if (chapterNumber && item.start < chapterNumber) {
+                        chapterList = data.chapterItems.slice(item.start - 1);
+
+                        function recursiveCrawlingFunction (item, count) {
+                            let content;
+
+                            cloudscraper.get(`https://www.webnovel.com/apiajax/chapter/GetContent?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].chapterId}`, (err, res, chapterresponse) => {
+                                if (err !== null) {
+                                    reject('requesterror: '+ err);
+                                }
+                                m.log(5, 'crawlByLink: Site: ' + item.short + ', got response');
+
+                                if (chapterresponse !== undefined && typeof(chapterresponse) !== 'object') {
+                                    let chapterObject = JSON.parse(chapterresponse);
+
+                                    newChapters.chapters.push(count);
+                                    chapterList = chapterList.slice(1);
+                                    cDB.inputChapter(count, 'false', item.short, m.escapeString('<b>' + chapterObject.data.chapterInfo.chapterIndex + ' - ' + chapterObject.data.chapterInfo.chapterName + '</b><br><br>' + chapterObject.data.chapterInfo.content.replace(/[\n]/g, '<br>')))
+                                        .catch(m.promiseError);
+
+                                    m.setAsNewChapter(count, item.short);
+                                    m.updateChapter(item.short, count, "quidan");
+                                    if (chapterList.length) {
+                                        recursiveCrawlingFunction(item, parseInt(count) + 1);
+                                    } else {
+                                        m.log(5, 'crawlQuidan: Site: ' + item.short + ', Crawl finished at Chapter ' + count);
+                                        resolve(newChapters);
+                                    }
+                                } else {
+                                    reject('ObjectError');
+                                }
+                            });
+                        }
+
+                        recursiveCrawlingFunction(item, item.start);
+                    } else {
+                        m.log(5, 'crawlByLink: Site: ' + item.short + ', no new Chapter. Done.');
+                        resolve(newChapters);
+                    }
+
+                });
+            });
+        });
+    };
+
+    m.getQuidanToken = (force) => {
+        return new Promise((resolve, reject) => {
+            if (force || !csrfToken) {
+                request({
+                    method: 'HEAD',
+                    url: `https://www.webnovel.com/`
+                }, (err, res, content) => {
+                    csrfToken = res.headers['set-cookie'][0].split(';')[0];
+                    csrfToken = csrfToken ? csrfToken.split('=')[1] : undefined;
+                    if (csrfToken) {
+                        resolve();
+                    } else {
+                        reject();
+                    }
+                });
+            } else {
+                resolve();
+            }
+        });
+    };
+
     m.deleteSeries = (param) => {
         let vars = m.escapeArray(['short'], param);
         Promise
@@ -189,7 +288,7 @@ function methods (back) {
     };
 
     m.editSeries = (param) => {
-        let vars = m.escapeArray(['name', 'short', 'rss', 'url1', 'url2', 'chapter', 'book', 'url3', 'bookChapterReset', 'currentLink', 'minChapterLength'], param);
+        let vars = m.escapeArray(['name', 'short', 'rss', 'url1', 'url2', 'chapter', 'book', 'url3', 'bookChapterReset', 'currentLink', 'minChapterLength', 'bookId'], param);
 
         return cDB.updateStorySettings(vars)
             .catch(m.promiseError);
@@ -204,7 +303,7 @@ function methods (back) {
 
     m.escapeString = (str) => {
         if (typeof(str) === 'string') {
-            return str.replace(/[\0\x08\x09\x1a\n\r''\\\%]/g, (char) => {
+            return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, (char) => {
                 switch (char) {
                     case '\0':
                         return '\\0';
@@ -628,9 +727,13 @@ function methods (back) {
             promArr = o.stories.map((item) => {
                 error[item.short] = false;
                 if (item.currentLink !== "false"){
-                    return m.crawlByLink(item, item.currentLink, item.start);
+                    if (item.currentLink === "quidan") {
+                        return m.crawlQuidan(item);
+                    } else {
+                        return m.crawlByLink(item);
+                    }
                 } else {
-                    return m.crawlSite(item, item.start, item.start2);
+                    return m.crawlSite(item);
                 }
             });
 
@@ -651,11 +754,10 @@ function methods (back) {
                     back.userList.forEach((user) => {
                         let userChapterList = newChapterStoryList.filter(story => user.stories.includes(story.short));
                         if (userChapterList.length > 0 && user.subscriptions && user.subscriptions.length > 0) {
-                            m.log(4, 'sending Notification to user' + user + 'who has ' + user.subscriptions.length + 'subscriptions.');
+                            m.log(4, 'sending Notification to user' + user.user + ' who has ' + user.subscriptions.length + ' subscriptions.');
                             user.subscriptions.forEach(subscription => message.sendNotification(subscription, JSON.stringify({
                                 chapterArray: userChapterList,
-                                silent: user.silent,
-                                vibrate: user.vibrate
+                                silent: user.silent
                             }), {TTL: 3600}));
                         }
                     });

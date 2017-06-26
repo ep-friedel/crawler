@@ -1490,6 +1490,7 @@ front.proto.picker = function(options, cb) {
 
     self.newData = (data, dataprop) => {
         if (self.initialized) {
+            self.currentPosition = 0;
             self.options.dataprop = dataprop || false;
             self.options.data = data;
             self._emptyList();

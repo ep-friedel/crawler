@@ -290,6 +290,15 @@ admin.handler.toggleAddSeries = (event) => {
         [8,4,5,6,7,10].forEach((cnt) => {
             items[cnt].children[1].value = items[cnt].children[1].defaultValue;
         });
+    } else if (type === 'quidan'){
+        [1,2,5,12].forEach((cnt) => {
+            items[cnt].className = items[cnt].className.replace(/ hideSoft/g, '');
+        });
+
+        [8,4,6,7,3,10,11].forEach((cnt) => {
+            items[cnt].children[1].value = items[cnt].children[1].defaultValue;
+        });
+        items[9].children[1].value = 'quidan';
     }
     if (document.querySelector('#editSeries').className.indexOf('active') !== -1) {
         items[0].className = items[0].className.replace(/ hideSoft/g, '');
@@ -394,6 +403,7 @@ admin.handler.addSeries = (edit, event) => {
     ,       currentLink = document.querySelector('#currentLinkField').value
     ,       bookChapterReset = document.querySelector('#bookChapterResetField').value
     ,       minChapterLength = document.querySelector('#minChapLen').value
+    ,       bookId = document.querySelector('#bookId').value
     ,       item = event.currentTarget;
 
     if (item.className.indexOf('confirm') !== -1) {
@@ -408,7 +418,7 @@ admin.handler.addSeries = (edit, event) => {
         return;
     }
 
-    dataString = 'name=' + name + '&short='+ short + '&url1='+ url1 + '&url2='+ url2 + '&url3='+ url3  + '&currentLink='+ currentLink + '&bookChapterReset='+ bookChapterReset + '&rss=' + rss + '&minChapterLength=' + minChapterLength;
+    dataString = 'name=' + name + '&short='+ short + '&url1='+ url1 + '&url2='+ url2 + '&url3='+ url3  + '&currentLink='+ currentLink + '&bookChapterReset='+ bookChapterReset + '&rss=' + rss + '&minChapterLength=' + minChapterLength+ '&bookId=' + bookId;
     if (admin.vars.seriesType === "oneVar"||admin.vars.seriesType === "link") {
         dataString += '&book=false&chapter='+ var1;
     } else {
@@ -435,7 +445,7 @@ admin.methods.applySettings = (item) => {
     ,     inputs     = document.querySelectorAll('.inputContainer input');
 
     if (document.querySelector('#editSeries').className.indexOf('active') !== -1) {
-        buttons[(item[0].url1.length < 2) ? 2 : (item[0].start2 === 'false') ? 0 : 1].click();
+        buttons[(item[0].currentLink === 'quidan') ? 3 : (item[0].currentLink.length > 2 && item[0].currentLink !== "false") ? 2 : (item[0].start2 === 'false') ? 0 : 1].click();
         inputs[0].value = item[0].short;
         inputs[1].value = item[0].name;
         inputs[2].value = item[0].rss;
@@ -447,6 +457,7 @@ admin.methods.applySettings = (item) => {
         inputs[8].value = item[0].currentLink;
         inputs[9].value = item[0].bookChapterReset;
         inputs[10].value = item[0].minChapterLength;
+        inputs[11].value = item[0].bookId;
     }
 };
 
@@ -632,6 +643,7 @@ admin.proto.picker = function(options, cb) {
 
     self.newData = (data, dataprop) => {
         if (self.initialized) {
+            self.currentPosition = 0;
             self.options.dataprop = dataprop || false;
             self.options.data = data;
             self._emptyList();
@@ -749,6 +761,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#oneVar').addEventListener('click', admin.handler.toggleAddSeries, false);
     document.querySelector('#twoVar').addEventListener('click', admin.handler.toggleAddSeries, false);
     document.querySelector('#link').addEventListener('click', admin.handler.toggleAddSeries, false);
+    document.querySelector('#quidan').addEventListener('click', admin.handler.toggleAddSeries, false);
     document.querySelector('#addNewSeriesButton').addEventListener('click', admin.handler.toggleAddEditSeries, false);
     document.querySelector('#editSeries').addEventListener('click', admin.handler.toggleAddEditSeries, false);
     document.querySelector('#deleteSeries').addEventListener('click', admin.handler.toggleAddEditSeries, false);

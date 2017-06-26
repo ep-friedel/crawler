@@ -142,7 +142,7 @@ function chapterDB(back) {
 
     q.insertStorySettings = (param) => {
         return new Promise((resolve, reject) => {
-            db.query('INSERT INTO `' + settingsDB + '`.`chapters` ( `name`, `short`, `rss`, `minChapterLength`, `url1`, `url2`, `start`, `start2`, `url3`, `bookChapterReset`, `currentLink`) VALUES ( "' + param.name + '", "' + param.short + '", "' + param.rss + '", "' + param.minChapterLength + '", "' + param.url1 + '", "' + param.url2 + '", "' + param.chapter + '", "' + param.book + '", "' + param.url3 + '", "' + param.bookChapterReset + '", "' + param.currentLink + '");',
+            db.query('INSERT INTO `' + settingsDB + '`.`chapters` ( `name`, `short`, `rss`, `minChapterLength`, `url1`, `url2`, `start`, `start2`, `url3`, `bookChapterReset`, `currentLink`, `bookId`) VALUES ( "' + param.name + '", "' + param.short + '", "' + param.rss + '", "' + param.minChapterLength + '", "' + param.url1 + '", "' + param.url2 + '", "' + param.chapter + '", "' + param.book + '", "' + param.url3 + '", "' + param.bookChapterReset + '", "' + param.currentLink + '", "' + param.bookId + '");',
                 (err, result) => {
                     if (err) {
                         reject(err);
@@ -183,7 +183,7 @@ function chapterDB(back) {
 
     q.updateStorySettings = (param) => {
         return new Promise((resolve, reject) => {
-            db.query('UPDATE `' + settingsDB + '`.`chapters` SET `name` = "' + param.name + '", `rss` = "' + param.rss + '", `minChapterLength` = "' + param.minChapterLength + '", `url1` = "' + param.url1 + '", `url2` = "' + param.url2 + '", `start` = "' + ((param.book !== undefined) ? param.chapter : param.book) + '", `start2` = "' + ((param.book !== undefined) ? param.book : param.chapter) + '", `url3` = "' + param.url3 + '", `bookChapterReset` = "' + param.bookChapterReset + '", `currentLink` = "' + param.currentLink + '" WHERE `short` = "' + param.short + '";',
+            db.query('UPDATE `' + settingsDB + '`.`chapters` SET `name` = "' + param.name + '", `rss` = "' + param.rss + '", `minChapterLength` = "' + param.minChapterLength + '", `url1` = "' + param.url1 + '", `url2` = "' + param.url2 + '", `start` = "' + ((param.book !== undefined) ? param.chapter : param.book) + '", `start2` = "' + ((param.book !== undefined) ? param.book : param.chapter) + '", `url3` = "' + param.url3 + '", `bookChapterReset` = "' + param.bookChapterReset + '", `bookId` = "' + param.bookId + '", `currentLink` = "' + param.currentLink + '" WHERE `short` = "' + param.short + '";',
             (err, result) => {
                 if (err) {
                     reject(err);
