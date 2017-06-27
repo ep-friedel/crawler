@@ -215,7 +215,7 @@ function methods (back) {
                         reject(content);
 
                     } else if (chapterNumber && item.start < chapterNumber) {
-                        chapterList = data.chapterItems.slice(item.start - 1);
+                        chapterList = data.chapterItems.slice(item.start);
 
                         function recursiveCrawlingFunction (item, count) {
                             let content;
