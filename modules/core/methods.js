@@ -248,7 +248,7 @@ function methods (back) {
                             });
                         }
 
-                        recursiveCrawlingFunction(item, item.start);
+                        recursiveCrawlingFunction(item, item.start + 1);
                     } else {
                         m.log(5, 'crawlByLink: Site: ' + item.short + ', no new Chapter. Done.');
                         resolve(newChapters);
