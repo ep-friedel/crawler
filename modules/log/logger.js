@@ -1,7 +1,8 @@
 function logger(back) {
-    const   m = back.methods
-        ,   o = back.options
-        ,   fs = require('fs');
+    const   m       = back.methods
+        ,   o       = back.options
+        ,   fs      = require('fs')
+        ,   exec    = require('child_process').execFile;
 
     let logStream,
         date,
@@ -38,6 +39,10 @@ function logger(back) {
                 flags: 'a',
                 defaultEncoding: 'utf8',
                 autoClose: true
+            });
+
+            exec(process.env.CRAWLER_HOME + "scripts/cleanLogs", (error, stdout, stderr) => {
+                m.log(3, stdout + error + stderr);
             });
         }
 
