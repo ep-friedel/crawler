@@ -214,7 +214,7 @@ function methods (back) {
                         csrfToken = undefined;
                         reject(content);
 
-                    } else if (chapterNumber && item.start < chapterNumber) {
+                    } else if (chapterNumber && item.start <= chapterNumber) {
                         chapterList = data.chapterItems.slice(item.start);
 
                         function recursiveCrawlingFunction (item, count) {
