@@ -216,8 +216,8 @@ function methods (back) {
 
                     } else if (chapterNumber && item.start < chapterNumber) {
                         chapterList = data.chapterItems.slice(item.start);
-                        if (!chapterList.filter(item => (item.chapterIndex > item.start)).length) {
-                            chapterList = data.chapterItems.filter(item => (item.chapterIndex > item.start));
+                        if (!chapterList.filter(chap => (chap.chapterIndex > item.start)).length) {
+                            chapterList = data.chapterItems.filter(chap => (chap.chapterIndex > item.start));
 
                             if (!chapterList.length) {
                                 m.log(2, 'crawlByLink: Site: ' + item.short + ', index updated, but chapter not yet available', data.chapterItems.slice(-10));
