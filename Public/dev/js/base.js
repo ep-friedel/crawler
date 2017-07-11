@@ -764,25 +764,31 @@ front.methods.login = (user, password, errorMessageInput) => {
         front.vars.jwt =  data.token;
         localStorage.jwt = data.token;
         front.vars.reloadTimer = setInterval(() => location.reload(), 5000);
-        navigator.serviceWorker.ready.then((registration) => {
-            if (navigator.serviceWorker.controller) {
-                clearInterval(front.vars.reloadTimer);
-                navigator.serviceWorker.controller.postMessage({type: 'newJWT', jwt: data.token});
-            }
-        })
-        .then(() => {
-            front.vars.busy.busyText.innerHTML = 'Preparing application';
-            document.getElementById('loginFrame').classList.add('hidden');
-            document.getElementById('loginForm').classList.add('hidden');
-            front.el.reader.classList.remove('hideSoft');
-            front.el.menu.classList.remove('hideSoft');
+        return navigator.serviceWorker.ready;
+    })
+    .then((registration) => {
+        if (navigator.serviceWorker.controller) {
+            clearInterval(front.vars.reloadTimer);
+            navigator.serviceWorker.controller.postMessage({type: 'newJWT', jwt: data.token});
+        }
+    })
+    .then(() => {
+        front.vars.busy.busyText.innerHTML = 'Preparing application';
+        document.getElementById('loginFrame').classList.add('hidden');
+        document.getElementById('loginForm').classList.add('hidden');
+        front.el.reader.classList.remove('hideSoft');
+        front.el.menu.classList.remove('hideSoft');
         front.el.body.classList.remove('readerMode');
         front.el.body.classList.add('menuMode');
-            front.vars.busy.remove();
-        })
-        .then(front.initAfterLogin)
-        .catch(err => console.warn('login error', err));
+
+        if (front.vars.user.role === "admin") {
+            document.querySelector('#admin').classList.remove('hidden');
+            front.el.statusRow.classList.remove('hidden');
+            front.serverActions.getStatus().then(front.initStatus);
+        }
+        front.vars.busy.remove();
     })
+    .then(front.initAfterLogin)
     .catch((err) => {
         if (front.vars.loginMessage !== undefined &&
             front.vars.loginMessage.f !== undefined &&
