@@ -220,7 +220,8 @@ function methods (back) {
                             chapterList = data.chapterItems.filter(item => (item.chapterIndex > item.start));
 
                             if (!chapterList.length) {
-                                m.log(2, 'crawlByLink: Site: ' + item.short + ', index updated, but chapter not yet available');
+                                m.log(2, 'crawlByLink: Site: ' + item.short + ', index updated, but chapter not yet available', data.chapterItems.filter(item => (item.chapterIndex > item.start - 10)););
+                                resolve(newChapters);
                                 return;
                             }
                         }
