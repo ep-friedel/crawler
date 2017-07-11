@@ -216,7 +216,14 @@ function methods (back) {
 
                     } else if (chapterNumber && item.start < chapterNumber) {
                         chapterList = data.chapterItems.slice(item.start);
-                        console.log(chapterList);
+                        if (!chapterList.filter(item => (item.chapterIndex > item.start)).length) {
+                            chapterList = data.chapterItems.filter(item => (item.chapterIndex > item.start));
+
+                            if (!chapterList.length) {
+                                m.log(2, 'crawlByLink: Site: ' + item.short + ', index updated, but chapter not yet available');
+                                return;
+                            }
+                        }
 
                         function recursiveCrawlingFunction (item, count) {
                             let content;
