@@ -229,32 +229,39 @@ function methods (back) {
                         function recursiveCrawlingFunction (item, count) {
                             let content;
 
-                            cloudscraper.get(`https://www.webnovel.com/apiajax/chapter/GetContent?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].chapterId}`, (err, res, chapterresponse) => {
-                                if (err !== null) {
-                                    reject('requesterror: '+ err);
-                                }
-                                m.log(5, 'crawlByLink: Site: ' + item.short + ', got response');
+                            cloudscraper.get(`https://www.webnovel.com/apiajax/chapter/GetChapterContentToken?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].chapterId}`, (err, res, tokenresponse) => {
+                                let response = JSON.parse(content),
+                                    token = response.data ? response.data.token : undefined;
+                                window.setTimeout(() => {
+                                    cloudscraper.get(`https://www.webnovel.com/apiajax/chapter/GetChapterContentByToken?_csrfToken=${csrfToken}&token=${token}`, (err, res, chapterresponse) => {
+                                        if (err !== null) {
+                                            reject('requesterror: '+ err);
+                                        }
+                                        m.log(5, 'crawlByLink: Site: ' + item.short + ', got response');
 
-                                if (chapterresponse !== undefined && typeof(chapterresponse) !== 'object') {
-                                    let chapterObject = JSON.parse(chapterresponse);
+                                        if (chapterresponse !== undefined && typeof(chapterresponse) !== 'object') {
+                                            let chapterObject = JSON.parse(chapterresponse);
 
-                                    newChapters.chapters.push(count);
-                                    chapterList = chapterList.slice(1);
-                                    cDB.inputChapter(count, 'false', item.short, m.escapeString('<b>' + chapterObject.data.chapterInfo.chapterIndex + ' - ' + chapterObject.data.chapterInfo.chapterName + '</b><br><br>' + chapterObject.data.chapterInfo.content.replace(/[\n]/g, '<br>')))
-                                        .catch(m.promiseError);
+                                            newChapters.chapters.push(count);
+                                            chapterList = chapterList.slice(1);
+                                            cDB.inputChapter(count, 'false', item.short, m.escapeString('<b>' + chapterObject.data.chapterInfo.chapterIndex + ' - ' + chapterObject.data.chapterInfo.chapterName + '</b><br><br>' + chapterObject.data.chapterInfo.content.replace(/[\n]/g, '<br>')))
+                                                .catch(m.promiseError);
 
-                                    m.setAsNewChapter(count, item.short);
-                                    m.updateChapter(item.short, count, "quidan");
-                                    if (chapterList.length) {
-                                        recursiveCrawlingFunction(item, parseInt(count) + 1);
-                                    } else {
-                                        m.log(5, 'crawlQuidan: Site: ' + item.short + ', Crawl finished at Chapter ' + count);
-                                        resolve(newChapters);
-                                    }
-                                } else {
-                                    reject('ObjectError');
-                                }
+                                            m.setAsNewChapter(count, item.short);
+                                            m.updateChapter(item.short, count, "quidan");
+                                            if (chapterList.length) {
+                                                recursiveCrawlingFunction(item, parseInt(count) + 1);
+                                            } else {
+                                                m.log(5, 'crawlQuidan: Site: ' + item.short + ', Crawl finished at Chapter ' + count);
+                                                resolve(newChapters);
+                                            }
+                                        } else {
+                                            reject('ObjectError');
+                                        }
+                                    });
+                                }, 15000 + 5000 * Math.random());
                             });
+
                         }
 
                         recursiveCrawlingFunction(item, item.start + 1);
