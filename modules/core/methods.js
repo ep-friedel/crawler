@@ -230,8 +230,14 @@ function methods (back) {
                             let content;
 
                             cloudscraper.get(`https://www.webnovel.com/apiajax/chapter/GetChapterContentToken?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].chapterId}`, (err, res, tokenresponse) => {
-                                let response = JSON.parse(content),
+                                if (err) {
+                                    reject(err);
+                                    return err;
+                                }
+                                let response = JSON.parse(tokenresponse),
                                     token = response.data ? response.data.token : undefined;
+
+
                                 window.setTimeout(() => {
                                     cloudscraper.get(`https://www.webnovel.com/apiajax/chapter/GetChapterContentByToken?_csrfToken=${csrfToken}&token=${token}`, (err, res, chapterresponse) => {
                                         if (err !== null) {
