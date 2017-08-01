@@ -419,7 +419,7 @@ admin.handler.addSeries = (edit, event) => {
     }
 
     dataString = 'name=' + name + '&short='+ short + '&url1='+ url1 + '&url2='+ url2 + '&url3='+ url3  + '&currentLink='+ currentLink + '&bookChapterReset='+ bookChapterReset + '&rss=' + rss + '&minChapterLength=' + minChapterLength+ '&bookId=' + bookId;
-    if (admin.vars.seriesType === "oneVar"||admin.vars.seriesType === "link") {
+    if (admin.vars.seriesType === "oneVar"||admin.vars.seriesType === "link"||admin.vars.seriesType === "quidan") {
         dataString += '&book=false&chapter='+ var1;
     } else {
         dataString += '&book=' + var1 + '&chapter='+ var2;

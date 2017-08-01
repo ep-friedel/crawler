@@ -238,7 +238,7 @@ function methods (back) {
                                     token = response.data ? response.data.token : undefined;
 
 
-                                window.setTimeout(() => {
+                                setTimeout(() => {
                                     cloudscraper.get(`https://www.webnovel.com/apiajax/chapter/GetChapterContentByToken?_csrfToken=${csrfToken}&token=${token}`, (err, res, chapterresponse) => {
                                         if (err !== null) {
                                             reject('requesterror: '+ err);
@@ -249,9 +249,10 @@ function methods (back) {
                                             let chapterObject = JSON.parse(chapterresponse);
 
                                             newChapters.chapters.push(count);
-                                            chapterList = chapterList.slice(1);
-                                            cDB.inputChapter(count, 'false', item.short, m.escapeString('<b>' + chapterObject.data.chapterInfo.chapterIndex + ' - ' + chapterObject.data.chapterInfo.chapterName + '</b><br><br>' + chapterObject.data.chapterInfo.content.replace(/[\n]/g, '<br>')))
+                                            cDB.inputChapter(count, 'false', item.short, m.escapeString('<b>' + chapterList[0].chapterIndex + ' - ' + chapterList[0].chapterName + '</b><br><br>' + chapterObject.data.content.replace(/[\n]/g, '<br>')))
                                                 .catch(m.promiseError);
+
+                                            chapterList = chapterList.slice(1);
 
                                             m.setAsNewChapter(count, item.short);
                                             m.updateChapter(item.short, count, "quidan");
