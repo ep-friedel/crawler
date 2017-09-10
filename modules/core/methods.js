@@ -527,6 +527,7 @@ function methods (back) {
         } else if (html.indexOf('<article') !== -1) {
             retvar = html.split(/<article.*?>/)[1]
                         .split('</article>')[0]
+                        .replace(/<span class="copyright-obfuscation">[^<]*<\/span>/, '')
                         .replace(/<p.*?<a.*?ext Chapter.*?\/p>/, '')
                         .split(/<p[^<]*?<a.*?ext Chapter.*?\/p>/g)[0]
                         .replace(/<script.*?\/script>/, '')
