@@ -769,7 +769,7 @@ front.methods.login = (user, password, errorMessageInput) => {
     .then((registration) => {
         if (navigator.serviceWorker.controller) {
             clearInterval(front.vars.reloadTimer);
-            navigator.serviceWorker.controller.postMessage({type: 'newJWT', jwt: data.token});
+            navigator.serviceWorker.controller.postMessage({type: 'newJWT', jwt: front.vars.jwt});
         }
     })
     .then(() => {
