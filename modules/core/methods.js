@@ -205,10 +205,18 @@ function methods (back) {
                     }
                     m.log(5, 'crawlByLink: Site: ' + item.short + ', got ChapterList');
 
-                    let response = JSON.parse(content),
-                        data = response ? response.data : undefined,
-                        chapterNumber = data ? data.bookInfo.totalChapterNum : undefined,
-                        chapterList;
+                    let response, data, chapterNumber, chapterList;
+
+                    try {
+                        response = JSON.parse(content);
+                        data = response.data;
+                        chapterNumber = data.bookInfo.totalChapterNum;
+                    }
+
+                    catch(err) {
+                        return reject('cannot parse List');
+                    }
+
                     if (response.code !== 0) {
                         m.log(2, 'crawlByLink: Site: ' + item.short + ', Error requesting ChapterList: ', content);
                         csrfToken = undefined;
@@ -230,12 +238,21 @@ function methods (back) {
                             let content;
 
                             cloudscraper.get(`https://www.webnovel.com/apiajax/chapter/GetChapterContentToken?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].chapterId}`, (err, res, tokenresponse) => {
+                                let response, token;
+
                                 if (err) {
                                     reject(err);
                                     return err;
                                 }
-                                let response = JSON.parse(tokenresponse),
-                                    token = response.data ? response.data.token : undefined;
+
+                                try {
+                                    response = JSON.parse(tokenresponse);
+                                    token = response.data;
+                                }
+                                catch(err) {
+                                    token = undefined;
+                                    return reject('TokenError');
+                                }
 
 
                                 setTimeout(() => {
@@ -246,7 +263,15 @@ function methods (back) {
                                         m.log(5, 'crawlByLink: Site: ' + item.short + ', got response');
 
                                         if (chapterresponse !== undefined && typeof(chapterresponse) !== 'object') {
-                                            let chapterObject = JSON.parse(chapterresponse);
+                                            let chapterObject;
+
+                                            try {
+                                                chapterObject = JSON.parse(chapterresponse);
+                                            }
+
+                                            catch(err) {
+                                                return reject('ObjectError');
+                                            }
 
                                             newChapters.chapters.push(count);
                                             cDB.inputChapter(count, 'false', item.short, m.escapeString('<b>' + chapterList[0].chapterIndex + ' - ' + chapterList[0].chapterName + '</b><br><br>' + chapterObject.data.content.replace(/[\n]/g, '<br>')))
