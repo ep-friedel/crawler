@@ -1,3 +1,6 @@
 
-1 lint errors found in modules/core/methods.js
-  [229,25](W082) Function declarations should not be placed in blocks. Use a function expression or move the statement to the top of the outer function.
+4 lint errors found in modules/core/methods.js
+  [216,30](W002) Value of 'err' may be overwritten in IE 8 and earlier.
+  [237,25](W082) Function declarations should not be placed in blocks. Use a function expression or move the statement to the top of the outer function.
+  [252,42](W002) Value of 'err' may be overwritten in IE 8 and earlier.
+  [272,54](W002) Value of 'err' may be overwritten in IE 8 and earlier.

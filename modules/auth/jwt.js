@@ -4,7 +4,7 @@ function auth(back) {
             jwt = require('jsonwebtoken');
 
     const   m = back.methods
-        ,   secretKey = uuid.v4()
+        ,   secretKey = process.env.CRAWLER_UUID ? process.env.CRAWLER_UUID : uuid.v4()
         ,   jwtOptions = {
                 issuer: 'crawler.fochlac.com'
             };
