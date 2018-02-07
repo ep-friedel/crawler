@@ -2,13 +2,12 @@ function router(back) {
     const   express = require('express')
         ,   app = express()
         ,   bodyparser = require('body-parser')
-        ,   server = require('http').createServer(app)
         ,   server_port = process.env.CRAWLER_PORT || 8080
         ,   server_ip_address = process.env.CRAWLER_IP || 'localhost'
         ,   fs = require('fs')
         ,   auth = require(process.env.CRAWLER_HOME + 'modules/auth/jwt')
         ,   hmac = require(process.env.CRAWLER_HOME + 'modules/auth/hmac')(process.env.GITHUB_SECRET, 'X-Hub-Signature')
-        ,   https = require('https')
+        ,   http = require('http')
 
         ,   h = back.handler
         ,   o = back.options
@@ -19,10 +18,7 @@ function router(back) {
                 admin: fs.readFileSync(process.env.CRAWLER_HOME + 'live/admin.html').toString()
             };
 
-    https.createServer({
-      key: fs.readFileSync(process.env.KEYSTORE + 'fochlac_com_key.pem'),
-      cert: fs.readFileSync(process.env.KEYSTORE + 'fochlac_com_cert_chain.pem')
-    }, app).listen(server_port, server_ip_address, () => {
+    http.createServer(app).listen(server_port, server_ip_address, () => {
         m.log(0, 'listening on port '+ server_port);
     });
 
@@ -47,7 +43,7 @@ function router(back) {
         if (req.connection.encrypted) {
             next();
         } else {
-            res.redirect('https://' + req.headers.host + req.url);
+            res.redirect('http://' + req.headers.host + req.url);
         }
     }
 

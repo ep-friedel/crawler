@@ -1,7 +1,7 @@
 /*global Response, Blob, clients, self, caches, Request, Headers, console, fetch, navigator, setInterval, clearInterval, clearTimeout, setTimeout, indexedDB */
 
 'use strict';
-let version = '5',
+let version = '6',
     jwt,
     offline = new Response(new Blob(), {status: 279}),
     staticContent = [
@@ -69,8 +69,7 @@ function handle_push(event) {
                 .then(saveMessages)
                 .then(displayMessage)
                 .then(resolve)
-                .catch(reject)
-                .then(clearPushEventStack);
+                .catch(reject);
         }, 3000);
     }));
 
@@ -101,11 +100,9 @@ function handle_push(event) {
 }
 
 function parsePushEventStack() {
-    return Promise.all(pushEventStack.map(event => event.data.text()));
-}
-
-function clearPushEventStack() {
+    let pushstack = [].concat(pushEventStack);
     pushEventStack = [];
+    return Promise.all(pushstack.map(event => event.data.text()));
 }
 
 function handle_click(event) {
@@ -183,24 +180,22 @@ function handle_fetch(event) {
         } else if (offlineRegex && offlineRegex.test(event.request.url)) {
             event.respondWith(
                 caches.open(version)
-                .then(cache => {
-                    return cache.match(event.request)
-                    .then((res) => {
-                        if (res) {
+                .then(cache => cache.match(event.request))
+                .then((res) => {
+                    if (res) {
+                        return res;
+                    } else {
+                        let req = event.request;
+
+                        return Promise.all([fetch(req.clone()), caches.open(version)])
+                        .then(results => {
+                            let res = results[0],
+                                cache = results[1]
+
+                            cache.put(req.clone(), res.clone());
                             return res;
-                        } else {
-                            let req = event.request;
-
-                            fetch(req.clone()).then(res => {
-                                caches.open(version)
-                                .then(cache => {
-                                    cache.put(req.clone(), res.clone());
-                                }).catch(err => console.warn(err));
-                            }).catch(err => console.warn(err));
-
-                            return fetch(req.clone()).catch(err => console.warn(err));
-                        }
-                    }).catch(err => console.warn(err));
+                        })
+                    }
                 }).catch(err => console.warn(err))
             );
         } else if (staticRegex && staticRegex.test(event.request.url)) {
