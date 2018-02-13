@@ -39,15 +39,6 @@ function router(back) {
     });
 
 
-    function requireHTTPS (req, res, next) {
-        if (req.connection.encrypted) {
-            next();
-        } else {
-            res.redirect('http://' + req.headers.host + req.url);
-        }
-    }
-
-
     /**************************************************************************************
     **************************            static             ******************************
     **************************************************************************************/
@@ -66,15 +57,15 @@ function router(back) {
     **************************************************************************************/
 
 
-    app.get('/index', requireHTTPS, (req, res, next) => {
+    app.get('/index', (req, res, next) => {
     res.status(200).send(live.index);
     });
 
-    app.get('/', requireHTTPS, (req, res, next) => {
-    res.redirect('/index');
+    app.get('/', (req, res, next) => {
+    //res.redirect('/index');
     });
 
-    app.get('/admin', requireHTTPS, (req, res, next) => {
+    app.get('/admin', (req, res, next) => {
     res.status(200).send(live.admin);
     });
 
