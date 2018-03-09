@@ -62,7 +62,7 @@ function router(back) {
     });
 
     app.get('/', (req, res, next) => {
-    //res.redirect('/index');
+    res.redirect('/index');
     });
 
     app.get('/admin', (req, res, next) => {

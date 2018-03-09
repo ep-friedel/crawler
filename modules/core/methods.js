@@ -7,6 +7,7 @@ function methods (back) {
         ,   chapterDB   = require(process.env.CRAWLER_HOME + 'modules/sql/chapterDB')(back)
         ,   userDB      = require(process.env.CRAWLER_HOME + 'modules/sql/userDB')(back)
         ,   message     = require('web-push')
+        ,   cheerio     = require('cheerio')
         ,   moment      = require('moment');
 
     message.setGCMAPIKey('AIzaSyDfk540wtYxDhYL5K0j6kiOpQBqe3dPKT8');
@@ -67,7 +68,7 @@ function methods (back) {
                             reject('requesterror: '+ err);
                         }
                         if (pageContent !== undefined && typeof(pageContent) !== 'object') {
-                            if (pageContent.includes('body class="error404')){
+                            if (pageContent.includes('body class="error404' || res.status === 404)){
                                     if (newChapters.chapters.length) {
                                         m.updateChapter(item.short, count, url);
                                     }
@@ -77,6 +78,7 @@ function methods (back) {
                                 m.log(5, 'crawlByLink: Site: ' + item.short + ', got html ');
                                 newUrl = m.getUrl(pageContent);
                                 content = m.parseHtml(pageContent);
+
                                 if (content.length > item.minChapterLength && newUrl !== false) {
                                     cDB.inputChapter(count, 'false', item.short, content)
                                         .catch(m.promiseError);
@@ -123,7 +125,7 @@ function methods (back) {
                     }
 
                     if (pageContent !== undefined && typeof(pageContent) !== 'object') {
-                        if (pageContent.includes('body class="error404')){
+                        if (pageContent.includes('body class="error404') || res.statusCode === 404){
                             if (start2 !== 'false' && !error[item.short]) {
                                 newstart2 = parseInt(start2) + 1;
                                 newstart = (item.bookChapterReset !== 0) ? 1 : start;
@@ -328,7 +330,7 @@ function methods (back) {
                                     reject(content);
                                 } else {
                                     newChapters.chapters.push(count);
-                                    cDB.inputChapter(count, 'false', item.short, m.escapeString('<b>' + chapterList[0].chapterIndex + ' - ' + chapterList[0].chapterName + '</b><br><br>' + (chapterObject.data.content ? chapterObject.data.content : chapterObject.data.chapterInfo.content).replace(/[\n]/g, '<br>')))
+                                    cDB.inputChapter(count, 'false', item.short, ('<b>' + chapterList[0].chapterIndex + ' - ' + chapterList[0].chapterName + '</b><br><br>' + (chapterObject.data.content ? chapterObject.data.content : chapterObject.data.chapterInfo.content).replace(/[\n]/g, '<br>')))
                                         .catch(m.promiseError);
 
                                     chapterList = chapterList.slice(1);
@@ -501,6 +503,17 @@ function methods (back) {
             match = html.match(/[<a[\s\S]{0,50}?href.?=.?["|'][\s\S]{0,120}?["|'][\s\S]{0,50}?>[\s\S]{0,100}?<span[\s\S]{0,100}?[N|n]ext.?[C|c]hapter[\s\S]{0,200}?<\/a>|<a href=".{0,120}?">.?[N|n]ext.?[C|c]hapter.?<\/a>/);
         }
 
+        if (!match || !match.length) {
+            m.log(6, 'getUrl: fallback parse2 used');
+            const $ = cheerio.load(html);
+            const link = $('.top-bar-area .next a').attr('href')
+
+            if (link.length > 5) {
+                m.log(5, 'getUrl: got link from html: ', link);
+                return 'http://www.wuxiaworld.com' + link;
+            } 
+        }
+
         if (match && typeof(match[0]) === 'string') {
             link = match[0].split(/href.?=.?["|']/)[1].split(/["|']/)[0];
             if (typeof(link) === 'string'){
@@ -609,6 +622,9 @@ function methods (back) {
                         .replace(/<p>/g, '')
                         .replace(/<\/p>/g, '<br>')
                         .replace(/<.?a.*?>/g, '');
+        } else if (html.indexOf('fr-view') !== -1) {
+            const $ = cheerio.load(html);
+            retvar = $('.section-content > .panel > .p-15 > .fr-view').html();
         }
         retvar = (retvar !== undefined) ? retvar.replace(/<div[\s\S]{0,50}?class="sharedaddy"[\s\S]*?<\/div>/g, '') : "empty";
 

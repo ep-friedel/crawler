@@ -76,7 +76,7 @@ function chapterDB(back) {
 
     q.inputChapter = (startNumber1, startNumber2, storyName, content) => {
         return new Promise((resolve, reject) => {
-            db.query('INSERT INTO  `' + DBName + '`.`' + storyName + '` (`Chapter`,`Content`) VALUES ("' + ((startNumber2 !== 'false') ? (startNumber2 + '.' + startNumber1) : startNumber1) + '", "' + content + '") ON DUPLICATE KEY UPDATE `Content`="' + content + '"',
+            db.query('INSERT INTO  `' + DBName + '`.`' + storyName + '` (`Chapter`,`Content`) VALUES ("' + ((startNumber2 !== 'false') ? (startNumber2 + '.' + startNumber1) : startNumber1) + '", ' + mysql.escape(content) + ') ON DUPLICATE KEY UPDATE `Content`=' + mysql.escape(content),
             (err, result) => {
                 if (err) {
                     reject(err);
