@@ -11,6 +11,12 @@ function registerHandlers(back) {
 		return m.addSeries(param);
 	};
 
+	h.setQuidanUserInfo = (param) => {
+		m.log(2, 'h:setQuidanUserInfo', param);
+
+		return m.setQuidanUserInfo(param);
+	};
+
 	h.deleteSeries = (param) => {
 		m.log(2, 'h:deleteSeries', param);
 

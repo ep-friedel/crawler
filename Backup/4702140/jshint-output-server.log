@@ -1,0 +1,29 @@
+
+27 lint errors found in modules/core/methods.js
+  [33,32](W033) Missing semicolon.
+  [34,85](W033) Missing semicolon.
+  [35,83](W033) Missing semicolon.
+  [39,88](W033) Missing semicolon.
+  [40,86](W033) Missing semicolon.
+  [41,6](W033) Missing semicolon.
+  [218,34](W033) Missing semicolon.
+  [219,19](W033) Missing semicolon.
+  [241,37](W033) Missing semicolon.
+  [264,21](W082) Function declarations should not be placed in blocks. Use a function expression or move the statement to the top of the outer function.
+  [307,98](W033) Missing semicolon.
+  [310,106](W033) Missing semicolon.
+  [342,265](E024) Unexpected ')'.
+  [342,265](E030) Expected an identifier and instead saw ')'.
+  [342,266](W116) Expected ')' and instead saw ';'.
+  [342,267](W033) Missing semicolon.
+  [368,44](W033) Missing semicolon.
+  [390,108](W033) Missing semicolon.
+  [391,118](W033) Missing semicolon.
+  [392,65](W033) Missing semicolon.
+  [406,48](W033) Missing semicolon.
+  [407,71](W033) Missing semicolon.
+  [408,6](W033) Missing semicolon.
+  [526,97](W033) Missing semicolon.
+  [532,29](W033) Missing semicolon.
+  [659,69](W033) Missing semicolon.
+  [894,44](W033) Missing semicolon.

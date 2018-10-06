@@ -8,6 +8,8 @@ function methods (back) {
         ,   userDB      = require(process.env.CRAWLER_HOME + 'modules/sql/userDB')(back)
         ,   message     = require('web-push')
         ,   cheerio     = require('cheerio')
+        ,   striptags   = require('striptags')
+        ,   redCrawler  = require('./reddit')
         ,   moment      = require('moment');
 
     message.setGCMAPIKey('AIzaSyDfk540wtYxDhYL5K0j6kiOpQBqe3dPKT8');
@@ -22,12 +24,41 @@ function methods (back) {
         ,   cDB = chapterDB
         ,   uDB = userDB;
 
+    const quidanURL = 'https://www.webnovel.com/'
+
     let crawlSite = [],
         runningCrawls = false,
         error = [],
         crawlerError = 0,
-        csrfToken;
+        csrfToken,
+        webnovel_uuid;
 
+    const myjar = request.jar()
+    m.setQuidanUserInfo({userId:'4301352156', userKey:'unSFDoGdSYZ'})
+
+    m.setQuidanUserInfo = ({userId, userKey}) => {
+        myjar.setCookie(request.cookie('ukey=' + userKey), quidanURL)
+        myjar.setCookie(request.cookie('uid=' + userId), quidanURL)
+
+        m.log(4, 'updated cookie jar to: ' + myjar.getCookieString(quidanURL))
+    }
+
+    m.refreshQuidanKey() {
+        const url = `https://ptlogin.webnovel.com/login/checkstatus?appid=900&areaid=1&source=enweb&format=jsonp&auto=1&method=autoLoginHandler&_csrfToken=${csrfToken}&_=${Date.now()}`
+
+        return new Promise((resolve, reject) => request({
+            method: 'GET',
+            url: url,
+            jar: myjar
+        }, (err, res, body) => {
+            if (err) {
+                m.log(2, 'error updating quidan cookies ', err)
+                reject(err)
+            } else {
+                resolve()
+            }
+        })
+    }
 
     m.addSeries = (param) => {
         let vars = m.escapeArray(['name', 'short', 'rss', 'url1', 'url2', 'chapter', 'book', 'url3', 'bookChapterReset', 'currentLink', 'minChapterLength', 'bookId'], param);
@@ -65,7 +96,7 @@ function methods (back) {
                 } else {
                     cloudscraper.get(url, (err, res, pageContent) => {
                         if (err !== null) {
-                            reject('requesterror: '+ err);
+                            reject(item.short + ': requesterror: '+ JSON.stringify(err));
                         }
                         if (pageContent !== undefined && typeof(pageContent) !== 'object') {
                             if (pageContent.includes('body class="error404' || res.status === 404)){
@@ -191,13 +222,14 @@ function methods (back) {
         });
     };
 
-    m.quidanRequest = (url) => {
+    m.quidanRequest = (url, csrfToken) => {
         let fullBody = '';
         return new Promise((resolve, reject) => {
 
             request({
                     method: 'GET',
-                    url: url
+                    url: url,
+                    jar: myjar
                 }, (err, res, body) => {
                     if (err) {
                         reject(err);
@@ -215,158 +247,203 @@ function methods (back) {
             },
             bookId = item.bookId;
 
-        return m.getQuidanToken()
-        .then(() => {
-            return new Promise((resolve, reject) => {
-                m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetChapterList?_csrfToken=${csrfToken}&bookId=${bookId}`)
-                .then((content) => {
-                    let response, data, chapterNumber, chapterList;
-                    m.log(5, 'crawlQuidan: Site: ' + item.short + ', got ChapterList');
+        return new Promise((resolve, reject) => {
+            m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetChapterList?_csrfToken=${csrfToken}&bookId=${bookId}`)
+            .then((content) => {
+                let response, data, chapterNumber, chapterList;
+                m.log(5, 'crawlQuidan: Site: ' + item.short + ', got ChapterList');
 
-                    try {
-                        response = JSON.parse(content);
-                        data = response.data;
-                        chapterNumber = data.bookInfo.totalChapterNum;
+                try {
+                    response = JSON.parse(content);
+                    chapterItems = response.data.volumeItems.reduce((acc, item) => acc.concat(item.chapterItems), []);
+                    chapterNumber = response.data.bookInfo.totalChapterNum;
+                } catch(err) {
+                    if (content.indexOf('"code":0,') !== -1) {
+                        m.log(4, 'Incomplete List, restarting Crawl for ' + item.short, err);
+                        return resolve(m.crawlQuidan(item));
+                    }
+                    console.log(err)
+                    return reject('crawlQuidan: cannot parse List for story - ' + item.short);
+                }
+
+                if (response.code !== 0) {
+                    m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting ChapterList: ', content);
+                    csrfToken = undefined;
+                    reject(content);
+                } else if (chapterNumber && item.start < chapterNumber) {
+                    chapterList = chapterItems.filter(chap => (chap.index > item.start && chap.isVip !== 2))
+                        .sort((a,b) => a.index - b.index)
+                        .filter((chap, index) => chap.index === item.start + index + 1 );
+
+                    if (!chapterList.length) {
+                        m.log(2, 'crawlQuidan: Site: ' + item.short + ', index updated, but chapter not yet available or paywalled');
+                        resolve(newChapters);
+                        return;
                     }
 
-                    catch(err) {
-                        if (content.indexOf('"code":0,') !== -1) {
-                            m.log(4, 'Incomplete List, restarting Crawl for ' + item.short);
-                            return resolve(m.crawlQuidan(item));
-                        }
-                        return reject('crawlQuidan: cannot parse List for story - ' + item.short);
-                    }
-
-                    if (response.code !== 0) {
-                        m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting ChapterList: ', content);
-                        csrfToken = undefined;
-                        reject(content);
-                    } else if (chapterNumber && item.start < chapterNumber) {
-                        chapterList = data.chapterItems.slice(item.start);
-
-                        if (!chapterList.filter(chap => (chap.chapterIndex > item.start)).length) {
-                            chapterList = data.chapterItems.filter(chap => (chap.chapterIndex > item.start));
-
-                            if (!chapterList.length) {
-                                m.log(2, 'crawlQuidan: Site: ' + item.short + ', index updated, but chapter not yet available', data.chapterItems.slice(-10));
-                                resolve(newChapters);
-                                return;
-                            }
-                        }
-
-                        function recursiveCrawlingFunction (item, count) {
-                            let content, token;
-                            m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetContent?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].chapterId}`)
-                            .then(chapterresponse => {
-                                m.log(5, 'crawlQuidan: Site: ' + item.short + ', got response');
+                    function recursiveCrawlingFunction (item, count) {
+                        let content, token;
+                        m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetContent?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].id}`, csrfToken)
+                        .then(chapterresponse => {
+                            m.log(5, 'crawlQuidan: Site: ' + item.short + '-' + count + ', got response');
 
 
-                                if (chapterresponse !== undefined && typeof(chapterresponse) !== 'object') {
-                                    let chapterObject;
+                            if (chapterresponse !== undefined && typeof(chapterresponse) !== 'object') {
+                                let chapterObject;
 
-                                    try {
-                                        chapterObject = JSON.parse(chapterresponse);
-                                    }
+                                try {
+                                    chapterObject = JSON.parse(chapterresponse);
+                                }
 
-                                    catch(err) {
-                                        reject('ObjectError');
-                                        return;
-                                    }
+                                catch(err) {
+                                    return Promise.reject('ObjectError');
+                                }
 
-                                    if (chapterObject.code !== 0) {
-                                        m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting Chapter: ', chapterObject, `https://www.webnovel.com/apiajax/chapter/GetContent?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].chapterId}`);
-                                        csrfToken = undefined;
-                                        resolve(newChapters);
-                                        return;
+                                if (!chapterObject) {
+                                    m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting Chapter: no chapterObject', `https://www.webnovel.com/apiajax/chapter/GetContent?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].id}`);
+                                    return Promise.reject('chapterObject error');
+                                } else if (chapterObject.code !== 0) {
+                                    m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting Chapter: ', chapterObject, `https://www.webnovel.com/apiajax/chapter/GetContent?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].id}`);
+                                    csrfToken = undefined;
+                                    return Promise.reject('done');;
+                                } else {
+                                    if (chapterObject.data && chapterObject.data.chapterInfo && chapterObject.data.chapterInfo.isAuth) {
+                                        return chapterObject;
                                     } else {
-                                        if (chapterObject.data.chapterInfo.isAuth) {
-                                            return chapterObject;
-                                        } else {
-                                            return m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetChapterContentToken?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].chapterId}`)
-                                                .then(tokenresponse => {
-                                                    let response;
+                                        return m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetChapterContentToken?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].id}`, csrfToken)
+                                            .then(tokenresponse => {
+                                                let response;
+
+                                                try {
+                                                    response = JSON.parse(tokenresponse);
+                                                    token = response.data.token;
+                                                }
+                                                catch(err) {
+                                                    token = undefined;
+                                                    return Promise.reject({type: 'invalidToken'});
+                                                }
+
+
+                                                if (!response || response.code !== 0) {
+                                                    return Promise.reject({type: 'invalidToken'})
+                                                }
+                                                if (response.data.user && response.data.user.status !== 0) {
+                                                    return Promise.reject({type: 'invalid login cookie'})
+                                                }
+                                                return token;
+                                            })
+                                            .then(token => new Promise(resolve => setTimeout(() => resolve(token), 5000 * Math.random())))
+                                            .then(token => m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetChapterContentByToken?_csrfToken=${csrfToken}&token=${token}`, csrfToken))
+                                            .then(resp => {
+                                                let chapterObject;
+                                                if (resp !== undefined && typeof(resp) !== 'object') {
 
                                                     try {
-                                                        response = JSON.parse(tokenresponse);
-                                                        token = response.data.token;
+                                                        chapterObject = JSON.parse(resp);
                                                     }
+
                                                     catch(err) {
-                                                        token = undefined;
-                                                        reject('TokenError');
-                                                        return;
+                                                        return Promise.reject('ObjectError');
                                                     }
-                                                    return token;
-                                                })
-                                                .then(token => new Promise(resolve => setTimeout(() => resolve(token), 15000 + 5000 * Math.random())))
-                                                .then(token => m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetChapterContentByToken?_csrfToken=${csrfToken}&token=${token}`))
-                                                .then(resp => {
-                                                    let chapterObject;
-                                                    if (resp !== undefined && typeof(resp) !== 'object') {
 
-                                                        try {
-                                                            chapterObject = JSON.parse(resp);
-                                                        }
-
-                                                        catch(err) {
-                                                            reject('ObjectError');
-                                                            return;
-                                                        }
-
-                                                        return chapterObject;
-                                                    } else {
-                                                        reject('ObjectError');
-                                                    }
-                                                });
-                                        }
-                                    }
-                                } else {
-                                    reject('ObjectError');
-                                }
-                            })
-                            .then(chapterObject => {
-                                if (chapterObject.code !== 0) {
-                                    m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting Chapter: ', chapterObject);
-                                    csrfToken = undefined;
-                                    reject(content);
-                                } else {
-                                    newChapters.chapters.push(count);
-                                    cDB.inputChapter(count, 'false', item.short, ('<b>' + chapterList[0].chapterIndex + ' - ' + chapterList[0].chapterName + '</b><br><br>' + (chapterObject.data.content ? chapterObject.data.content : chapterObject.data.chapterInfo.content).replace(/[\n]/g, '<br>')))
-                                        .catch(m.promiseError);
-
-                                    chapterList = chapterList.slice(1);
-
-                                    m.setAsNewChapter(count, item.short);
-                                    m.updateChapter(item.short, count, "quidan");
-                                    if (chapterList.length) {
-                                        recursiveCrawlingFunction(item, parseInt(count) + 1);
-                                    } else {
-                                        m.log(5, 'crawlQuidan: Site: ' + item.short + ', Crawl finished at Chapter ' + count);
-                                        resolve(newChapters);
+                                                    return chapterObject;
+                                                } else {
+                                                    console.log('called')
+                                                    return Promise.reject('ObjectError');
+                                                }
+                                            });
                                     }
                                 }
-                            })
-                            .catch(err => m.log(2, 'Error: recursiveCrawlingFunction: ' + err));
-                        }
+                            } else {
+                                reject('ObjectError');
+                            }
+                        })
+                        .then(chapterObject => {
+                            console.log(chapterObject)
+                            if (chapterObject.code !== 0 || !chapterObject.data) {
+                                m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting Chapter: ', chapterObject, `https://www.webnovel.com/apiajax/chapter/GetChapterContentToken?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].id}`, chapterObject);
+                                csrfToken = undefined;
+                                return Promise.reject();
+                            } else {
+                                newChapters.chapters.push(count);
+                                cDB.inputChapter(count, 'false', item.short, ('<b>' + chapterList[0].index + ' - ' + chapterList[0].name + '</b><br><br>' + (chapterObject.data.content ? chapterObject.data.content : chapterObject.data.chapterInfo.content).replace(/[\n]/g, '<br>')))
+                                    .catch(m.promiseError);
 
-                        recursiveCrawlingFunction(item, item.start + 1);
-                    } else {
-                        m.log(5, 'crawlQuidan: Site: ' + item.short + ', no new Chapter. Done.');
-                        resolve(newChapters);
+                                chapterList = chapterList.slice(1);
+
+                                m.setAsNewChapter(count, item.short);
+                                m.updateChapter(item.short, count, "quidan");
+                                if (chapterList.length) {
+                                    recursiveCrawlingFunction(item, parseInt(count) + 1);
+                                } else {
+                                    m.log(5, 'crawlQuidan: Site: ' + item.short + ', Crawl finished at Chapter ' + count);
+                                    resolve(newChapters);
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            if (err === 'done') {
+                                resolve(newChapters);
+                            } else if (err.type === 'invalidToken') {
+                                m.log(5, 'Invalid Quidan Token, most likely paywall');
+                                resolve(newChapters);
+                            } else {
+                                m.log(2, 'Error: recursiveCrawlingFunction - ' + item.short + ':' + err);
+                                reject(err)
+                            }
+                        });
                     }
-                });
+
+                    recursiveCrawlingFunction(item, item.start + 1);
+                } else {
+                    m.log(5, 'crawlQuidan: Site: ' + item.short + ', no new Chapter. Done.');
+                    resolve(newChapters);
+                }
             });
         });
     };
+
+    m.crawlReddit = (item) => {
+        let newChapters = {
+            short: item.short,
+            chapters: []
+        };
+
+        m.log(5, 'crawlReddit: story: ' + item.short + ', Chapter: ', item.start, ' - searching for: ', item.name, item.modified + '000');
+        return redCrawler.getChapters(item.name, item.modified + '000')
+            .then(chapters => {
+                m.log(5, 'crawlReddit: story: ' + item.short + ', Chapter: ', item.start, ' - got ', chapters.length, ' chapters');
+                if (!chapters.length) return Promise.resolve(newChapters)
+                const updateChapters = Promise.all(chapters.map((chapter, index) => {
+                    const id = item.start + index + 1;
+                    m.setAsNewChapter(id, item.short);
+                    return cDB.inputChapter(id, 'false', item.short, chapter)
+                        .then(() => m.log(5, 'crawlReddit: story: ' + item.short + ', Chapter: ', id, ' - inserted successfully!'));
+                }));
+
+                m.updateChapter(item.short, item.start + chapters.length, "reddit");
+
+                chapters.forEach((chapter, index) => m.setAsNewChapter(item.start + index + 1, item.short));
+                newChapters.chapters = chapters.map((chapter, index) => item.start + index + 1);
+                return updateChapters.then(() => newChapters, err => m.log(3, 'crawlReddit: story: ' + item.short, err))
+            })
+            .catch(err => {
+                m.log(3, 'crawlReddit: story: ' + item.short + ', Chapter: ', item.start, ' - error crawling: ', err)
+            })
+
+    }
 
     m.getQuidanToken = (force) => {
         return new Promise((resolve, reject) => {
             if (force || csrfToken === undefined) {
                 request({
                     method: 'HEAD',
-                    url: `https://www.webnovel.com/`
+                    url: `https://www.webnovel.com/`,
+                    jar: myjar
                 }, (err, res, content) => {
-                    csrfToken = res.headers['set-cookie'][0].split(';')[0];
-                    csrfToken = csrfToken ? csrfToken.split('=')[1] : undefined;
+                    let csrfCookie = res.headers['set-cookie'].find(cookie => cookie.includes('csrfToken'))
+                    let webnovelIdCookie = res.headers['set-cookie'].find(cookie => cookie.includes('webnovel_uuid'))
+                    csrfToken = m.extractCookieValue(csrfCookie)
                     if (csrfToken) {
                         resolve();
                     } else {
@@ -378,6 +455,11 @@ function methods (back) {
             }
         });
     };
+
+    m.extractCookieValue = (cookie) => {
+        let cookieKeyVal = cookie.split(';')[0]
+        return cookieKeyVal && cookieKeyVal.split('=')[1] || undefined
+    }
 
     m.deleteSeries = (param) => {
         let vars = m.escapeArray(['short'], param);
@@ -493,6 +575,19 @@ function methods (back) {
         var link,
             match;
 
+        if (html.length) {
+            const $ = cheerio.load(html);
+            const mylink = $('.top-bar-area .next a') && $('.top-bar-area .next a').attr('href')
+
+            if (mylink && mylink.length > 5) {
+                m.log(5, 'getUrl: got link from html: ', mylink);
+                return 'http://www.wuxiaworld.com' + mylink;
+            } else if ($('.top-bar-area .next a').length) {
+                return false
+            }
+
+        }
+
         match = html.split(/<[^<A-Za-z]*\/[^<A-Za-z]*a[^<A-Za-z]+/)
                     .map(match => match.split(/<[^<A-Za-z/]*a[^<A-Za-z]+/)[1])
                     .filter(match => match && match.match(/[NneE]?[EeXxNn][EexXtT][xXTt ]?[tT Cc][ CchH][CcHhAa][HhAaPp][AaPpTt][PpTtEe][TtEeRr][EeRr ]?/));
@@ -503,16 +598,6 @@ function methods (back) {
             match = html.match(/[<a[\s\S]{0,50}?href.?=.?["|'][\s\S]{0,120}?["|'][\s\S]{0,50}?>[\s\S]{0,100}?<span[\s\S]{0,100}?[N|n]ext.?[C|c]hapter[\s\S]{0,200}?<\/a>|<a href=".{0,120}?">.?[N|n]ext.?[C|c]hapter.?<\/a>/);
         }
 
-        if (!match || !match.length) {
-            m.log(6, 'getUrl: fallback parse2 used');
-            const $ = cheerio.load(html);
-            const link = $('.top-bar-area .next a').attr('href')
-
-            if (link.length > 5) {
-                m.log(5, 'getUrl: got link from html: ', link);
-                return 'http://www.wuxiaworld.com' + link;
-            } 
-        }
 
         if (match && typeof(match[0]) === 'string') {
             link = match[0].split(/href.?=.?["|']/)[1].split(/["|']/)[0];
@@ -625,10 +710,11 @@ function methods (back) {
         } else if (html.indexOf('fr-view') !== -1) {
             const $ = cheerio.load(html);
             retvar = $('.section-content > .panel > .p-15 > .fr-view').html();
+            retvar = retvar && retvar.replace(/<\/p>/g, '<\/p><br>')
         }
         retvar = (retvar !== undefined) ? retvar.replace(/<div[\s\S]{0,50}?class="sharedaddy"[\s\S]*?<\/div>/g, '') : "empty";
 
-        return retvar;
+        return striptags(retvar, ['br']);
     };
 
     m.promiseError = (errorMessage) => {
@@ -823,6 +909,12 @@ function methods (back) {
                 }
             }
 
+            if (shortName === "SR"){
+                if(start === 833) {
+                    start++;
+                }
+            }
+
             /**********************
             ***  Exceptions-End ***
             **********************/
@@ -838,20 +930,26 @@ function methods (back) {
             error = [];
             runningCrawls = true;
 
-            promArr = o.stories.map((item) => {
-                error[item.short] = false;
-                if (item.currentLink !== "false"){
-                    if (item.currentLink === "quidan") {
-                        return m.crawlQuidan(item);
+            m.getQuidanToken()
+            .then(m.refreshQuidanKey)
+            .then(() => {
+                promArr = o.stories.map((item) => {
+                    error[item.short] = false;
+                    if (item.currentLink !== "false"){
+                        if (item.currentLink === "reddit") {
+                            return m.crawlReddit(item);
+                        } else if (item.currentLink === "quidan") {
+                            return m.crawlQuidan(item);
+                        } else {
+                            return m.crawlByLink(item);
+                        }
                     } else {
-                        return m.crawlByLink(item);
+                        return m.crawlSite(item);
                     }
-                } else {
-                    return m.crawlSite(item);
-                }
-            });
+                });
 
-            Promise.all(promArr)
+                return Promise.all(promArr)
+            })
             .then((newChapters) => {
                 let notifyUsers,
                     newChapterStoryList;
@@ -872,7 +970,7 @@ function methods (back) {
                             user.subscriptions.forEach(subscription => message.sendNotification(subscription, JSON.stringify({
                                 chapterArray: userChapterList,
                                 silent: user.silent
-                            }), {TTL: 3600}));
+                            }), {TTL: 3600})).catch(err => m.log(3, 'Error sending new chapters notification: ', err));
                         }
                     });
                 } else {

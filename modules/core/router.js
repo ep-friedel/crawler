@@ -12,6 +12,7 @@ function router(back) {
         ,   h = back.handler
         ,   o = back.options
         ,   m = back.methods
+        ,   reddit = require(process.env.CRAWLER_HOME + 'modules/core/reddit')
         ,   a = auth(back)
         ,   live = {
                 index: fs.readFileSync(process.env.CRAWLER_HOME + 'live/index.html').toString(),
@@ -143,6 +144,19 @@ function router(back) {
             res.status(500).send();
             m.promiseError(err);
         });
+    });
+
+    app.get('/api/test', (req, res) => {
+        m.log(2, 'API:test', (o.log >= 11) ? req : "");
+        reddit.getChapters(req.query.query, req.query.time)
+            .then(data => {
+                console.log(data)
+                res.status(200).send(data)
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(500).send()
+            })
     });
 
     app.get('/api/requestChapter', a.isLoggedInAPI, (req, res) => {
@@ -277,6 +291,12 @@ function router(back) {
                 m.promiseError(err);
                 res.status(500).send();
             });
+    });
+
+    app.post('/api/quidanLogin', a.isLoggedInAPI, a.isAdmin, (req, res) => {
+        m.log(2, 'API:quidanLogin:post', (o.log >= 11) ? req : "");
+        h.setQuidanUserInfo(req.body)
+        res.status(200).send();
     });
 
     /*

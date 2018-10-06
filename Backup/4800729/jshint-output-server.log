@@ -1,0 +1,136 @@
+
+51 lint errors found in modules/core/deflate.js
+  [140,2](W033) Missing semicolon.
+  [150,2](W033) Missing semicolon.
+  [162,2](W033) Missing semicolon.
+  [169,2](W033) Missing semicolon.
+  [243,2](W033) Missing semicolon.
+  [268,2](W033) Missing semicolon.
+  [273,2](W033) Missing semicolon.
+  [289,2](W033) Missing semicolon.
+  [293,2](W033) Missing semicolon.
+  [296,37](W093) Did you mean to return a conditional instead of an assignment?
+  [297,2](W033) Missing semicolon.
+  [308,2](W033) Missing semicolon.
+  [320,2](W033) Missing semicolon.
+  [337,2](W033) Missing semicolon.
+  [342,2](W033) Missing semicolon.
+  [351,2](W033) Missing semicolon.
+  [360,2](W033) Missing semicolon.
+  [371,2](W033) Missing semicolon.
+  [417,2](W033) Missing semicolon.
+  [502,9](W014) Misleading line break before '&&'; readers may interpret this as an expression boundary.
+  [505,2](W033) Missing semicolon.
+  [564,2](W033) Missing semicolon.
+  [648,2](W033) Missing semicolon.
+  [745,2](W033) Missing semicolon.
+  [771,2](W033) Missing semicolon.
+  [808,2](W033) Missing semicolon.
+  [850,2](W033) Missing semicolon.
+  [944,2](W033) Missing semicolon.
+  [962,2](W033) Missing semicolon.
+  [994,2](W033) Missing semicolon.
+  [1087,2](W033) Missing semicolon.
+  [1129,2](W033) Missing semicolon.
+  [1222,2](W033) Missing semicolon.
+  [1273,2](W033) Missing semicolon.
+  [1330,2](W033) Missing semicolon.
+  [1362,2](W033) Missing semicolon.
+  [1389,2](W033) Missing semicolon.
+  [1432,8](W014) Misleading line break before '&&'; readers may interpret this as an expression boundary.
+  [1470,2](W033) Missing semicolon.
+  [1528,2](W033) Missing semicolon.
+  [1577,2](W033) Missing semicolon.
+  [1600,2](W033) Missing semicolon.
+  [1617,2](W033) Missing semicolon.
+  [1630,2](W033) Missing semicolon.
+  [1646,2](W033) Missing semicolon.
+  [1668,2](W033) Missing semicolon.
+  [1752,2](W033) Missing semicolon.
+  [1761,2](W033) Missing semicolon.
+  [1984,2](W033) Missing semicolon.
+  [1993,2](W033) Missing semicolon.
+  [1993,2](E043) Too many errors. (82% scanned).
+31 lint errors found in modules/core/methods.js
+  [27,50](W033) Missing semicolon.
+  [36,32](W033) Missing semicolon.
+  [37,67](W033) Missing semicolon.
+  [38,65](W033) Missing semicolon.
+  [42,70](W033) Missing semicolon.
+  [43,68](W033) Missing semicolon.
+  [45,79](W033) Missing semicolon.
+  [46,6](W033) Missing semicolon.
+  [223,34](W033) Missing semicolon.
+  [224,19](W033) Missing semicolon.
+  [246,37](W033) Missing semicolon.
+  [269,21](W082) Function declarations should not be placed in blocks. Use a function expression or move the statement to the top of the outer function.
+  [312,98](W033) Missing semicolon.
+  [315,106](W033) Missing semicolon.
+  [347,265](E024) Unexpected ')'.
+  [347,265](E030) Expected an identifier and instead saw ')'.
+  [347,266](W116) Expected ')' and instead saw ';'.
+  [347,267](W033) Missing semicolon.
+  [373,44](W033) Missing semicolon.
+  [402,15](W033) Missing semicolon.
+  [404,6](W033) Missing semicolon.
+  [414,108](W033) Missing semicolon.
+  [415,118](W033) Missing semicolon.
+  [416,65](W033) Missing semicolon.
+  [430,48](W033) Missing semicolon.
+  [431,71](W033) Missing semicolon.
+  [432,6](W033) Missing semicolon.
+  [550,97](W033) Missing semicolon.
+  [556,29](W033) Missing semicolon.
+  [683,69](W033) Missing semicolon.
+  [920,44](W033) Missing semicolon.
+45 lint errors found in modules/core/redditCrawler.js
+  [1,35](W033) Missing semicolon.
+  [2,35](W033) Missing semicolon.
+  [3,29](W033) Missing semicolon.
+  [4,38](W033) Missing semicolon.
+  [6,155](W033) Missing semicolon.
+  [10,61](W033) Missing semicolon.
+  [17,40](W033) Missing semicolon.
+  [21,48](W033) Missing semicolon.
+  [23,27](W033) Missing semicolon.
+  [24,11](W033) Missing semicolon.
+  [25,7](W033) Missing semicolon.
+  [29,1](W030) Expected an assignment or function call and instead saw an expression.
+  [29,6](E058) Missing semicolon.
+  [30,56](W033) Missing semicolon.
+  [37,43](W033) Missing semicolon.
+  [38,73](W033) Missing semicolon.
+  [39,59](W033) Missing semicolon.
+  [40,11](W033) Missing semicolon.
+  [41,7](W033) Missing semicolon.
+  [46,64](W033) Missing semicolon.
+  [47,62](W033) Missing semicolon.
+  [48,45](W033) Missing semicolon.
+  [49,21](W033) Missing semicolon.
+  [53,41](W116) Expected '(' and instead saw '{'.
+  [54,9](W024) Expected an identifier and instead saw 'const' (a reserved word).
+  [54,15](E020) Expected ')' to match '{' from line 53 and instead saw 'posts'.
+  [54,21](E030) Expected an identifier and instead saw '='.
+  [54,23](E020) Expected '}' to match '{' from line 52 and instead saw 'await'.
+  [54,28](E058) Missing semicolon.
+  [54,44](W033) Missing semicolon.
+  [56,75](W033) Missing semicolon.
+  [58,42](W033) Missing semicolon.
+  [60,53](W033) Missing semicolon.
+  [61,32](W116) Expected ')' and instead saw 'getPosts'.
+  [61,54](E058) Missing semicolon.
+  [61,54](E030) Expected an identifier and instead saw ')'.
+  [61,54](W030) Expected an assignment or function call and instead saw an expression.
+  [61,55](W033) Missing semicolon.
+  [62,44](W083) Functions declared within loops referencing an outer scoped variable may lead to confusing semantics.
+  [62,75](W033) Missing semicolon.
+  [65,54](W033) Missing semicolon.
+  [66,31](E058) Missing semicolon.
+  [66,80](W033) Missing semicolon.
+  [67,24](W033) Missing semicolon.
+  [67,16](E041) Unrecoverable syntax error. (89% scanned).
+4 lint errors found in modules/core/router.js
+  [154,33](W033) Missing semicolon.
+  [155,39](W033) Missing semicolon.
+  [156,15](W033) Missing semicolon.
+  [295,38](W033) Missing semicolon.

@@ -1,0 +1,119 @@
+body {
+  overflow: hidden;
+}
+
+#reader {
+	max-height: 100vh;
+	height: 100vh;
+}
+
+.sublist {
+    height: auto;
+    display: flex;
+	flex-direction: column;
+}
+
+.sublist > li {
+	padding: 0vh;
+  margin: 1.5vh 2.5vw;
+  box-shadow: 0 0 2.5vh -0.5vh;
+  overflow: hidden;
+}
+
+div#reader > ul{
+  height: auto;
+  padding-bottom: 5vh;
+}
+
+input {
+  font-size:2.5vh;
+}
+
+div#reader {
+  position:inherit;
+  max-height: 90vh;
+  height: 90vh;
+}
+
+.chapter {
+  width:40%;
+}
+
+.story .story {
+  width:20vw;
+}
+
+.storypicker {
+  width:40%;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+}
+
+.story .storypicker {
+  width:90%;
+  justify-content:space-between;
+}
+
+.chapterpicker {
+  width:50%;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+}
+
+.storytag {
+  height:3vh;
+}
+
+.minbutton {
+  margin:.5vh;
+  padding:.5vh;
+}
+
+.inputContainer {
+    flex-wrap: wrap;
+    padding: 1vh;
+}
+
+.settingsInput{
+  width: 45vw;
+  height: 3vh;
+  border: 0.2vh solid black;
+  text-align: center;
+}
+
+#addSeries span{
+  width: 35vw;
+  text-align: left;
+}
+
+.working {
+  box-shadow: 0 0 2.5vh -0.5vh, inset yellow 0 0 15vh -6vh;
+}
+.done {
+  box-shadow: 0 0 2.5vh -0.5vh, inset green 0 0 15vh -6vh;
+}
+div#menu {
+    background: #67573d;
+    bottom: 0;
+    top: auto;
+    max-height: 10vh;
+    color: #f9f1e2;
+}
+.head{
+    font-size: 5vh !important;
+    height: 5vh;
+    padding: 2.5vh 0;
+    color: #67573d;
+}
+#menu .head {
+    color: #f9f1e2;
+}
+div#menu:before {
+    content: none;
+}
+body,
+.sublist > li {
+    color: #67573d;
+}
