@@ -306,24 +306,15 @@ admin.handler.toggleAddSeries = (event) => {
         [8,4,5,6,7,10].forEach((cnt) => {
             items[cnt].children[1].value = items[cnt].children[1].defaultValue;
         });
-    } else if (type === 'quidan'){
-        [1,2,5,11,12].forEach((cnt) => {
+    } else if (type === 'wwc'){
+        [1,2,5,9,11,12].forEach((cnt) => {
             items[cnt].className = items[cnt].className.replace(/ hideSoft/g, '');
         });
 
-        [8,4,6,7,3,10,11].forEach((cnt) => {
+        [8,4,6,7,10].forEach((cnt) => {
             items[cnt].children[1].value = items[cnt].children[1].defaultValue;
         });
-        items[9].children[1].value = 'quidan';
-    } else if (type === 'reddit'){
-        [1,2,5,11].forEach((cnt) => {
-            items[cnt].className = items[cnt].className.replace(/ hideSoft/g, '');
-        });
-
-        [8,4,6,7,3,10,11,12].forEach((cnt) => {
-            items[cnt].children[1].value = items[cnt].children[1].defaultValue;
-        });
-        items[9].children[1].value = 'reddit';
+        items[3].children[1].value = 'wwc';
     }
     if (document.querySelector('#editSeries').className.indexOf('active') !== -1) {
         items[0].className = items[0].className.replace(/ hideSoft/g, '');
@@ -444,7 +435,7 @@ admin.handler.addSeries = (edit, event) => {
     }
 
     dataString = 'name=' + name + '&short='+ short + '&url1='+ url1 + '&url2='+ url2 + '&url3='+ url3  + '&currentLink='+ currentLink + '&bookChapterReset='+ bookChapterReset + '&rss=' + rss + '&minChapterLength=' + minChapterLength+ '&bookId=' + bookId;
-    if (admin.vars.seriesType === "oneVar"||admin.vars.seriesType === "link"||admin.vars.seriesType === "quidan") {
+    if (admin.vars.seriesType === "oneVar"||admin.vars.seriesType === "link"||admin.vars.seriesType === "wwc") {
         dataString += '&book=false&chapter='+ var1;
     } else {
         dataString += '&book=' + var1 + '&chapter='+ var2;
@@ -461,15 +452,6 @@ admin.handler.addSeries = (edit, event) => {
 
 admin.handler.setLogLevel = () => {
     admin.serverActions.setLogLevel(admin.vars.logLevelPicker.getValue());
-};
-
-admin.handler.setQuidanLogin = () => {
-    const userId = document.querySelector('#userId').value;
-    const userKey = document.querySelector('#userKey').value;
-
-    if (userId && userKey && userKey.length && userId.length) {
-        admin.serverActions.setQuidanLogin(userId, userKey);
-    }
 };
 
 admin.methods.applySettings = (item) => {
@@ -802,8 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#oneVar').addEventListener('click', admin.handler.toggleAddSeries, false);
     document.querySelector('#twoVar').addEventListener('click', admin.handler.toggleAddSeries, false);
     document.querySelector('#link').addEventListener('click', admin.handler.toggleAddSeries, false);
-    document.querySelector('#quidan').addEventListener('click', admin.handler.toggleAddSeries, false);
-    document.querySelector('#reddit').addEventListener('click', admin.handler.toggleAddSeries, false);
+    document.querySelector('#wwc').addEventListener('click', admin.handler.toggleAddSeries, false);
     document.querySelector('#addNewSeriesButton').addEventListener('click', admin.handler.toggleAddEditSeries, false);
     document.querySelector('#editSeries').addEventListener('click', admin.handler.toggleAddEditSeries, false);
     document.querySelector('#deleteSeries').addEventListener('click', admin.handler.toggleAddEditSeries, false);
@@ -813,5 +794,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#restartServer').addEventListener('click', admin.handler.restartServer, false);
     document.querySelector('#readerLink').addEventListener('click', admin.handler.readerLink, false);
     document.querySelector('#triggerCrawler').addEventListener('click', admin.serverActions.manualRefresh, false);
-    document.querySelector('#quidanLogin').addEventListener('click', admin.handler.setQuidanLogin, false);
 });

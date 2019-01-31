@@ -34,16 +34,16 @@ function methods (back) {
         webnovel_uuid;
 
     const myjar = request.jar()
-    m.setQuidanUserInfo({userId:'4301352156', userKey:'unSFDoGdSYZ'})
+
 
     m.setQuidanUserInfo = ({userId, userKey}) => {
         myjar.setCookie(request.cookie('ukey=' + userKey), quidanURL)
         myjar.setCookie(request.cookie('uid=' + userId), quidanURL)
 
-        m.log(4, 'updated cookie jar to: ' + myjar.getCookieString(quidanURL))
-    }
+        m.log(4, 'updated cookie jar to: ' + myjar.getCookieString(quidanURL));
+    };
 
-    m.refreshQuidanKey() {
+    m.refreshQuidanKey = () => {
         const url = `https://ptlogin.webnovel.com/login/checkstatus?appid=900&areaid=1&source=enweb&format=jsonp&auto=1&method=autoLoginHandler&_csrfToken=${csrfToken}&_=${Date.now()}`
 
         return new Promise((resolve, reject) => request({
@@ -57,8 +57,8 @@ function methods (back) {
             } else {
                 resolve()
             }
-        })
-    }
+        }));
+    };
 
     m.addSeries = (param) => {
         let vars = m.escapeArray(['name', 'short', 'rss', 'url1', 'url2', 'chapter', 'book', 'url3', 'bookChapterReset', 'currentLink', 'minChapterLength', 'bookId'], param);
@@ -332,7 +332,7 @@ function methods (back) {
                                                 }
                                                 return token;
                                             })
-                                            .then(token => new Promise(resolve => setTimeout(() => resolve(token), 5000 * Math.random())))
+                                            .then(token => new Promise(resolve => setTimeout(() => resolve(token), 10000 + 5000 * Math.random())))
                                             .then(token => m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetChapterContentByToken?_csrfToken=${csrfToken}&token=${token}`, csrfToken))
                                             .then(resp => {
                                                 let chapterObject;
@@ -348,7 +348,6 @@ function methods (back) {
 
                                                     return chapterObject;
                                                 } else {
-                                                    console.log('called')
                                                     return Promise.reject('ObjectError');
                                                 }
                                             });
@@ -359,11 +358,10 @@ function methods (back) {
                             }
                         })
                         .then(chapterObject => {
-                            console.log(chapterObject)
-                            if (chapterObject.code !== 0 || !chapterObject.data) {
+                            if (chapterObject.code !== 0 || !chapterObject.data || !chapterObject.data.content && !chapterObject.data.chapterInfo ) {
                                 m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting Chapter: ', chapterObject, `https://www.webnovel.com/apiajax/chapter/GetChapterContentToken?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].id}`, chapterObject);
                                 csrfToken = undefined;
-                                return Promise.reject();
+                                return Promise.reject('authError');
                             } else {
                                 newChapters.chapters.push(count);
                                 cDB.inputChapter(count, 'false', item.short, ('<b>' + chapterList[0].index + ' - ' + chapterList[0].name + '</b><br><br>' + (chapterObject.data.content ? chapterObject.data.content : chapterObject.data.chapterInfo.content).replace(/[\n]/g, '<br>')))
@@ -382,7 +380,7 @@ function methods (back) {
                             }
                         })
                         .catch(err => {
-                            if (err === 'done') {
+                            if (err === 'done' || err === 'authError') {
                                 resolve(newChapters);
                             } else if (err.type === 'invalidToken') {
                                 m.log(5, 'Invalid Quidan Token, most likely paywall');
@@ -410,7 +408,7 @@ function methods (back) {
         };
 
         m.log(5, 'crawlReddit: story: ' + item.short + ', Chapter: ', item.start, ' - searching for: ', item.name, item.modified + '000');
-        return redCrawler.getChapters(item.name, item.modified + '000')
+        return redCrawler.getChapters(`"${item.name}"`, item.modified + '000')
             .then(chapters => {
                 m.log(5, 'crawlReddit: story: ' + item.short + ', Chapter: ', item.start, ' - got ', chapters.length, ' chapters');
                 if (!chapters.length) return Promise.resolve(newChapters)
@@ -423,7 +421,6 @@ function methods (back) {
 
                 m.updateChapter(item.short, item.start + chapters.length, "reddit");
 
-                chapters.forEach((chapter, index) => m.setAsNewChapter(item.start + index + 1, item.short));
                 newChapters.chapters = chapters.map((chapter, index) => item.start + index + 1);
                 return updateChapters.then(() => newChapters, err => m.log(3, 'crawlReddit: story: ' + item.short, err))
             })
@@ -441,6 +438,9 @@ function methods (back) {
                     url: `https://www.webnovel.com/`,
                     jar: myjar
                 }, (err, res, content) => {
+                    if (!res.headers['set-cookie']) {
+                        reject()
+                    }
                     let csrfCookie = res.headers['set-cookie'].find(cookie => cookie.includes('csrfToken'))
                     let webnovelIdCookie = res.headers['set-cookie'].find(cookie => cookie.includes('webnovel_uuid'))
                     csrfToken = m.extractCookieValue(csrfCookie)
@@ -647,7 +647,7 @@ function methods (back) {
     };
 
     m.setNotificationSettings = (param, userObject) => {
-        let vars = m.escapeArray(['vibrate', 'silent'], param),
+        let vars = m.escapeArray(['silent'], param),
             cleanedUserObject = back.userList.filter(user => user.user == userObject.user)[0];
 
         userObject.silent = vars.silent;
@@ -964,13 +964,14 @@ function methods (back) {
                 if (newChapterStoryList.length) {
                     m.log(3, 'got new chapters for ' + newChapterStoryList.map(story => story.short).join(', ') + '.');
                     back.userList.forEach((user) => {
+                        m.log(2, 'debug:', back.userList)
                         let userChapterList = newChapterStoryList.filter(story => user.stories.includes(story.short));
                         if (userChapterList.length > 0 && user.subscriptions && user.subscriptions.length > 0) {
                             m.log(4, 'sending Notification to user' + user.user + ' who has ' + user.subscriptions.length + ' subscriptions.');
                             user.subscriptions.forEach(subscription => message.sendNotification(subscription, JSON.stringify({
                                 chapterArray: userChapterList,
                                 silent: user.silent
-                            }), {TTL: 3600})).catch(err => m.log(3, 'Error sending new chapters notification: ', err));
+                            }), {TTL: 3600}).catch(err => m.log(3, 'Error sending new chapters notification: ', err)));
                         }
                     });
                 } else {
@@ -993,6 +994,8 @@ function methods (back) {
 
         }
     };
+
+    m.setQuidanUserInfo({userId:'4301352156', userKey:'unSFDoGdSYZ'})
 }
 
 module.exports = methods;

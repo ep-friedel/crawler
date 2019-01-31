@@ -19,7 +19,7 @@ function getPosts(query, after) {
             if (!result.postOrder) return reject ('no posts', result)
             const posts = result.postOrder
                 .map(id => result.posts[id])
-                .filter(({source}) => !!source && !!source.url && source.url.includes('paste.imirhil.fr'))
+                .filter(({source}) => !!source && !!source.url && /\?.*=/.test(source.url))
                 .map(({ source, title, created, id }) => ({ source: source.url, title, created, id }))
 
             resolve(posts)
@@ -35,7 +35,7 @@ async function loadPastebin(sources) {
 
 function getPastebinContent (url) {
     return new Promise((resolve, reject) => {
-        request.get({url, headers: {accept: 'application/json'}}, (err, res, result) => {
+        request.post({url, headers: {accept: 'application/json'}}, (err, res, result) => {
             try {
                 const parsedResult = JSON.parse(result)
                 const cipherdata = parsedResult.data
