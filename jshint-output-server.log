@@ -1,109 +1,27 @@
 
-4 lint errors found in modules/core/reddit/Base64.js
-  [26,21](W014) Misleading line break before '+'; readers may interpret this as an expression boundary.
-  [45,83](W033) Missing semicolon.
-  [49,53](W033) Missing semicolon.
-  [73,2](W033) Missing semicolon.
-51 lint errors found in modules/core/reddit/deflate.js
-  [140,2](W033) Missing semicolon.
-  [150,2](W033) Missing semicolon.
-  [162,2](W033) Missing semicolon.
-  [169,2](W033) Missing semicolon.
-  [243,2](W033) Missing semicolon.
-  [268,2](W033) Missing semicolon.
-  [273,2](W033) Missing semicolon.
-  [289,2](W033) Missing semicolon.
-  [293,2](W033) Missing semicolon.
-  [296,37](W093) Did you mean to return a conditional instead of an assignment?
-  [297,2](W033) Missing semicolon.
-  [308,2](W033) Missing semicolon.
-  [320,2](W033) Missing semicolon.
-  [337,2](W033) Missing semicolon.
-  [342,2](W033) Missing semicolon.
-  [351,2](W033) Missing semicolon.
-  [360,2](W033) Missing semicolon.
-  [371,2](W033) Missing semicolon.
-  [417,2](W033) Missing semicolon.
-  [502,9](W014) Misleading line break before '&&'; readers may interpret this as an expression boundary.
-  [505,2](W033) Missing semicolon.
-  [564,2](W033) Missing semicolon.
-  [648,2](W033) Missing semicolon.
-  [745,2](W033) Missing semicolon.
-  [771,2](W033) Missing semicolon.
-  [808,2](W033) Missing semicolon.
-  [850,2](W033) Missing semicolon.
-  [944,2](W033) Missing semicolon.
-  [962,2](W033) Missing semicolon.
-  [994,2](W033) Missing semicolon.
-  [1087,2](W033) Missing semicolon.
-  [1129,2](W033) Missing semicolon.
-  [1222,2](W033) Missing semicolon.
-  [1273,2](W033) Missing semicolon.
-  [1330,2](W033) Missing semicolon.
-  [1362,2](W033) Missing semicolon.
-  [1389,2](W033) Missing semicolon.
-  [1432,8](W014) Misleading line break before '&&'; readers may interpret this as an expression boundary.
-  [1470,2](W033) Missing semicolon.
-  [1528,2](W033) Missing semicolon.
-  [1577,2](W033) Missing semicolon.
-  [1600,2](W033) Missing semicolon.
-  [1617,2](W033) Missing semicolon.
-  [1630,2](W033) Missing semicolon.
-  [1646,2](W033) Missing semicolon.
-  [1668,2](W033) Missing semicolon.
-  [1752,2](W033) Missing semicolon.
-  [1761,2](W033) Missing semicolon.
-  [1984,2](W033) Missing semicolon.
-  [1993,2](W033) Missing semicolon.
-  [1993,2](E043) Too many errors. (82% scanned).
-50 lint errors found in modules/core/reddit/index.js
-  [1,35](W033) Missing semicolon.
-  [2,35](W033) Missing semicolon.
-  [3,29](W033) Missing semicolon.
-  [4,38](W033) Missing semicolon.
-  [5,35](W033) Missing semicolon.
-  [7,155](W033) Missing semicolon.
-  [11,61](W033) Missing semicolon.
-  [18,40](W033) Missing semicolon.
-  [19,70](W033) Missing semicolon.
-  [23,103](W033) Missing semicolon.
-  [25,27](W033) Missing semicolon.
-  [26,11](W033) Missing semicolon.
-  [27,7](W033) Missing semicolon.
-  [31,1](W030) Expected an assignment or function call and instead saw an expression.
-  [31,6](E058) Missing semicolon.
-  [32,56](W033) Missing semicolon.
-  [40,56](W033) Missing semicolon.
-  [41,53](W033) Missing semicolon.
-  [42,60](W033) Missing semicolon.
-  [43,25](W002) Value of 'err' may be overwritten in IE 8 and earlier.
-  [44,33](W033) Missing semicolon.
-  [45,31](W033) Missing semicolon.
-  [47,11](W033) Missing semicolon.
-  [48,7](W033) Missing semicolon.
-  [53,64](W033) Missing semicolon.
-  [54,81](W033) Missing semicolon.
-  [55,21](W033) Missing semicolon.
-  [59,41](W116) Expected '(' and instead saw '{'.
-  [60,9](W024) Expected an identifier and instead saw 'try' (a reserved word).
-  [60,13](E020) Expected ')' to match '{' from line 59 and instead saw '{'.
-  [61,13](E030) Expected an identifier and instead saw 'let'.
-  [61,17](E020) Expected '}' to match '{' from line 58 and instead saw 'posts'.
-  [61,23](E031) Bad assignment.
-  [61,30](E058) Missing semicolon.
-  [61,46](W033) Missing semicolon.
-  [63,79](W033) Missing semicolon.
-  [65,46](W033) Missing semicolon.
-  [67,57](W033) Missing semicolon.
-  [68,44](W116) Expected ')' and instead saw 'getPosts'.
-  [68,66](E058) Missing semicolon.
-  [68,66](E030) Expected an identifier and instead saw ')'.
-  [68,66](W030) Expected an assignment or function call and instead saw an expression.
-  [68,67](W033) Missing semicolon.
-  [69,48](W083) Functions declared within loops referencing an outer scoped variable may lead to confusing semantics.
-  [69,79](W033) Missing semicolon.
-  [72,58](W033) Missing semicolon.
-  [73,35](E058) Missing semicolon.
-  [73,84](W033) Missing semicolon.
-  [74,65](W033) Missing semicolon.
-  [74,64](E041) Unrecoverable syntax error. (85% scanned).
+25 lint errors found in modules/core/wwc/index.js
+  [1,41](W033) Missing semicolon.
+  [2,43](W033) Missing semicolon.
+  [3,41](W033) Missing semicolon.
+  [5,45](W033) Missing semicolon.
+  [7,31](W033) Missing semicolon.
+  [8,14](W033) Missing semicolon.
+  [13,41](W033) Missing semicolon.
+  [14,44](W033) Missing semicolon.
+  [15,46](W033) Missing semicolon.
+  [16,58](W033) Missing semicolon.
+  [21,6](W033) Missing semicolon.
+  [27,62](W033) Missing semicolon.
+  [29,24](W033) Missing semicolon.
+  [30,39](W033) Missing semicolon.
+  [33,122](W033) Missing semicolon.
+  [35,22](W033) Missing semicolon.
+  [36,45](W033) Missing semicolon.
+  [39,30](W033) Missing semicolon.
+  [40,45](W033) Missing semicolon.
+  [41,11](W033) Missing semicolon.
+  [50,67](W033) Missing semicolon.
+  [51,42](W033) Missing semicolon.
+  [52,11](W033) Missing semicolon.
+  [54,7](W033) Missing semicolon.
+  [57,69](W033) Missing semicolon.

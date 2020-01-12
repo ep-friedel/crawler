@@ -142,7 +142,7 @@ function chapterDB(back) {
 
     q.insertStorySettings = (param) => {
         return new Promise((resolve, reject) => {
-            db.query('INSERT INTO `' + settingsDB + '`.`chapters` ( `name`, `short`, `rss`, `minChapterLength`, `url1`, `url2`, `start`, `start2`, `url3`, `bookChapterReset`, `currentLink`, `bookId`) VALUES ( "' + param.name + '", "' + param.short + '", "' + param.rss + '", "' + param.minChapterLength + '", "' + param.url1 + '", "' + param.url2 + '", "' + param.chapter + '", "' + param.book + '", "' + param.url3 + '", "' + param.bookChapterReset + '", "' + param.currentLink + '", "' + param.bookId + '");',
+            db.query('INSERT INTO `' + settingsDB + '`.`chapters` ( `name`, `short`, `rss`, `minChapterLength`, `url1`, `url2`, `start`, `start2`, `url3`, `bookChapterReset`, `currentLink`, `bookId`) VALUES ( "' + param.name + '", "' + param.short + '", "' + param.rss + '", "' + (param.minChapterLength || 5000) + '", "' + param.url1 + '", "' + param.url2 + '", "' + (param.chapter || 0) + '", "' + param.book + '", "' + param.url3 + '", "' + (param.bookChapterReset || 0) + '", "' + param.currentLink + '", "' + param.bookId + '");',
                 (err, result) => {
                     if (err) {
                         reject(err);

@@ -39,9 +39,9 @@ admin.serverActions.setLogLevel = (level) => {
     http.send();
 };
 
-admin.serverActions.setQuidanLogin = (userId, userKey) => {
+admin.serverActions.createNewUser = (username, password) => {
     const http = new XMLHttpRequest(),
-          url = '/api/quidanLogin';
+          url = '/api/signup';
 
     http.open('POST', url, true);
     http.setRequestHeader("Cache-Control", "no-Cache");
@@ -52,7 +52,7 @@ admin.serverActions.setQuidanLogin = (userId, userKey) => {
 
         }
     };
-    http.send(`userKey=${userKey}&userId=${userId}`);
+    http.send(`user=${username}&password=${password}`);
 };
 
 admin.serverActions.markAllRead = (data) => {
@@ -193,6 +193,16 @@ admin.serverActions.manualRefresh = () => {
 };
 
 
+
+admin.handler.createNewUser = (event) => {
+    const username = document.querySelector('#username').value
+    const password = document.querySelector('#password').value
+
+    admin.serverActions.createNewUser(username, password)
+    
+    document.querySelector('#username').value = ''
+    document.querySelector('#password').value = ''
+};
 
 admin.handler.showProperty = (event) => {
     const item = event.currentTarget.nextElementSibling;    /*srcElement --> currentTarget*/
@@ -460,8 +470,8 @@ admin.methods.applySettings = (item) => {
 
     if (document.querySelector('#editSeries').className.indexOf('active') !== -1) {
         buttons[(item[0].currentLink === 'reddit')
-            ? 4
-            : (item[0].currentLink === 'quidan')
+            ? 3
+            : (item[0].rss === 'wwc')
                 ? 3
                 : (item[0].currentLink.length > 2 && item[0].currentLink !== "false")
                     ? 2
@@ -794,4 +804,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#restartServer').addEventListener('click', admin.handler.restartServer, false);
     document.querySelector('#readerLink').addEventListener('click', admin.handler.readerLink, false);
     document.querySelector('#triggerCrawler').addEventListener('click', admin.serverActions.manualRefresh, false);
+    document.querySelector('#createUser').addEventListener('click', admin.handler.createNewUser, false);
 });

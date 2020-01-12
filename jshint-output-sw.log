@@ -1,5 +1,5 @@
 
 3 lint errors found in Public/dev/sw/service-worker.js
   [3,1](W097) Use the function form of "use strict".
-  [193,51](W033) Missing semicolon.
-  [197,27](W033) Missing semicolon.
+  [194,51](W033) Missing semicolon.
+  [198,27](W033) Missing semicolon.

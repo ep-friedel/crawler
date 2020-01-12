@@ -1,64 +1,22 @@
 function methods (back) {
-    const   cloudscraper= require('cloudscraper')
-        ,   request     = require('request')
-        ,   exec        = require('child_process').execFile
+    const   exec        = require('child_process').execFile
         ,   fs          = require('fs')
         ,   logger      = require(process.env.CRAWLER_HOME + 'modules/log/logger')(back)
         ,   chapterDB   = require(process.env.CRAWLER_HOME + 'modules/sql/chapterDB')(back)
         ,   userDB      = require(process.env.CRAWLER_HOME + 'modules/sql/userDB')(back)
-        ,   message     = require('web-push')
-        ,   cheerio     = require('cheerio')
-        ,   striptags   = require('striptags')
-        ,   redCrawler  = require('./reddit')
+        ,   wwcCrawler  = require('./wwc')
+        ,   pdf         = require('./parsePdf')
         ,   moment      = require('moment');
-
-    message.setGCMAPIKey('AIzaSyDfk540wtYxDhYL5K0j6kiOpQBqe3dPKT8');
-    message.setVapidDetails(
-      'mailto:fochlac@gmail.com',
-      'BLaOlvhqet3tC5e6oIliQr5NF2Sqn8VHq9VjzR9ItF9AnHFgYaB3dN38rTuYC6tKSRxzzTFmMia6kJ_J2auGLCU',
-      'XUrwfTFYENtpbX63Wx9drwlfsB8n3RWnmc-156PeexI'
-    );
 
     const   m = back.methods
         ,   o = back.options
         ,   cDB = chapterDB
         ,   uDB = userDB;
 
-    const quidanURL = 'https://www.webnovel.com/'
-
-    let crawlSite = [],
-        runningCrawls = false,
+    let runningCrawls = false,
         error = [],
         crawlerError = 0,
-        csrfToken,
-        webnovel_uuid;
-
-    const myjar = request.jar()
-
-
-    m.setQuidanUserInfo = ({userId, userKey}) => {
-        myjar.setCookie(request.cookie('ukey=' + userKey), quidanURL)
-        myjar.setCookie(request.cookie('uid=' + userId), quidanURL)
-
-        m.log(4, 'updated cookie jar to: ' + myjar.getCookieString(quidanURL));
-    };
-
-    m.refreshQuidanKey = () => {
-        const url = `https://ptlogin.webnovel.com/login/checkstatus?appid=900&areaid=1&source=enweb&format=jsonp&auto=1&method=autoLoginHandler&_csrfToken=${csrfToken}&_=${Date.now()}`
-
-        return new Promise((resolve, reject) => request({
-            method: 'GET',
-            url: url,
-            jar: myjar
-        }, (err, res, body) => {
-            if (err) {
-                m.log(2, 'error updating quidan cookies ', err)
-                reject(err)
-            } else {
-                resolve()
-            }
-        }));
-    };
+        runningParse = false;
 
     m.addSeries = (param) => {
         let vars = m.escapeArray(['name', 'short', 'rss', 'url1', 'url2', 'chapter', 'book', 'url3', 'bookChapterReset', 'currentLink', 'minChapterLength', 'bookId'], param);
@@ -77,393 +35,69 @@ function methods (back) {
         back.refreshTimer = undefined;
     };
 
-    m.crawlByLink = (item) => {
-        let newChapters = {
-                short: item.short,
-                chapters: []
-            },
-            url = item.currentLink,
-            count = item.start;
+    m.parsePdf = (short, name) => {
+        if (runningParse) {
+            return Promise.reject('parse already running, please parse only one file at a time')
+        }
+        runningParse = true
+        return pdf(short)
+            .then((pages) => {
+                return Promise.all([
+                        cDB.insertStorySettings({short, name, currentLink: 'pdf', rss: 'pdf', minChapterLength: 1 }),
+                        cDB.createStoryTable({short, name, currentLink: 'pdf', rss: 'pdf', minChapterLength: 1 })
+                    ])
+                    .then(() => {
+                        let promise = Promise.resolve()
 
-        m.log(5, 'crawlByLink: Site: ' + item.short + ', Url: ', url);
-
-        return new Promise((resolve, reject) => {
-            function recursiveCrawlingFunction (item, url, count) {
-                let newUrl, content;
-
-                if (typeof(url) !== 'string' || url === 'false') {
-                    reject('no url');
-                } else {
-                    cloudscraper.get(url, (err, res, pageContent) => {
-                        if (err !== null) {
-                            reject(item.short + ': requesterror: '+ JSON.stringify(err));
-                        }
-                        if (pageContent !== undefined && typeof(pageContent) !== 'object') {
-                            if (pageContent.includes('body class="error404' || res.status === 404)){
-                                    if (newChapters.chapters.length) {
-                                        m.updateChapter(item.short, count, url);
-                                    }
-                                    m.log(4, 'crawlByLink: Site: ' + item.short + ', Site not found! Url: ', url);
-                                    resolve(newChapters);
-                            } else {
-                                m.log(5, 'crawlByLink: Site: ' + item.short + ', got html ');
-                                newUrl = m.getUrl(pageContent);
-                                content = m.parseHtml(pageContent);
-
-                                if (content.length > item.minChapterLength && newUrl !== false) {
-                                    cDB.inputChapter(count, 'false', item.short, content)
-                                        .catch(m.promiseError);
-                                    newChapters.chapters.push(count);
-                                    m.setAsNewChapter(count, item.short);
-                                    m.updateChapter(item.short, count, url);
-                                    recursiveCrawlingFunction(item, newUrl, parseInt(count) + 1);
-                                } else {
-                                    m.log(5, 'crawlByLink: Site: ' + item.short + ', Crawl finished at Chapter ' + count);
-                                    if (newChapters.chapters.length) {
-                                        m.updateChapter(item.short, count, url);
-                                    }
-                                    resolve(newChapters);
-                                }
-                            }
-                        } else {
-                            reject('ObjectError');
-                        }
-                    });
-                }
-            }
-            recursiveCrawlingFunction(item, url, count);
-        });
-    };
-
-    m.crawlSite = (item) => {
-        let newChapters = {
-                short: item.short,
-                chapters: []
-            },
-            start = item.start,
-            start2 = item.start2;
-
-        m.log(5, 'crawlSite: Site: ' + item.short + ', Chapter: ', start);
-
-        return new Promise((resolve, reject) => {
-            function recursiveCrawlingFunction (item, start, start2) {
-                let url = item.url1 + ((start2 !== 'false') ? (start2 + item.url2 + start + item.url3) : (start + item.url2)),
-                    content;
-                cloudscraper.get(url, (err, res, pageContent) => {
-                    if (err !== null) {
-                        reject(err);
-                        return;
-                    }
-
-                    if (pageContent !== undefined && typeof(pageContent) !== 'object') {
-                        if (pageContent.includes('body class="error404') || res.statusCode === 404){
-                            if (start2 !== 'false' && !error[item.short]) {
-                                newstart2 = parseInt(start2) + 1;
-                                newstart = (item.bookChapterReset !== 0) ? 1 : start;
-
-                                error[item.short] = true;
-
-                                m.log(5, 'crawlSite: Site: ' + item.short + ', 404 error, trying book ' + newstart2 + ' Chapter ', newstart);
-                                if (newChapters.chapters.length) {
-                                    m.updateChapter(item.short, start);
-                                }
-                                recursiveCrawlingFunction(item, newstart, newstart2);
-                            } else {
-                                if (!error[item.short] && newChapters.chapters.length) {
-                                    m.updateChapter(item.short, start);
-                                }
-                                m.log(4, 'crawlSite, Site: ' + item.short + ', Message: Site not found! Url: ', url);
-                                resolve(newChapters);
-                            }
-                        } else {
-                            m.log(5, 'crawlSite: Site: ' + item.short + ', got html ');
-                            content = m.parseHtml(pageContent);
-
-                            if (content.length > item.minChapterLength) {
-                                cDB.inputChapter(start, start2, item.short, content)
-                                    .catch(m.promiseError);
-                                m.setAsNewChapter((start2 !== 'false') ? start2 + '.' + start : start , item.short);
-                                newChapters.chapters.push((start2 !== 'false') ? start2 + '.' + start : start);
-                                m.updateChapter(item.short, start);
-
-                                if (start2 !== 'false' && error[item.short]) {
-                                    error[item.short] = false;
-                                    cDB.updateStorySettingsWithBooks(start2, item.short)
-                                        .catch(m.promiseError);
-                                }
-                                recursiveCrawlingFunction(item, parseInt(start) + 1, start2);
-
-                            } else {
-                                if (start2 !== 'false' && !error[item.short]) {
-                                    error[item.short] = true;
-
-                                    m.log(5, 'crawlSite: Site: ' + item.short + ', short text, trying book ', parseInt(start2) + 1);
-
-                                    if (newChapters.chapters.length) {
-                                        m.updateChapter(item.short, start);
-                                    }
-                                    recursiveCrawlingFunction(item, 1, parseInt(start2) + 1);
-                                } else {
-                                    m.log(5, 'crawlSite: Site: ' + item.short + ', Crawl finished at Chapter ', start);
-
-                                    if (!error[item.short] && newChapters.chapters.length) {
-                                        m.updateChapter(item.short, start);
-                                    }
-                                    resolve(newChapters);
-                                }
-                            }
-                        }
-                    } else {
-                        reject('Object Error');
-                    }
-                });
-            }
-            recursiveCrawlingFunction(item, start, start2);
-        });
-    };
-
-    m.quidanRequest = (url, csrfToken) => {
-        let fullBody = '';
-        return new Promise((resolve, reject) => {
-
-            request({
-                    method: 'GET',
-                    url: url,
-                    jar: myjar
-                }, (err, res, body) => {
-                    if (err) {
-                        reject(err);
-                    }
-
-                    resolve(body)
-                })
-        });
-    };
-
-    m.crawlQuidan = (item) => {
-        let newChapters = {
-                short: item.short,
-                chapters: []
-            },
-            bookId = item.bookId;
-
-        return new Promise((resolve, reject) => {
-            m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetChapterList?_csrfToken=${csrfToken}&bookId=${bookId}`)
-            .then((content) => {
-                let response, data, chapterNumber, chapterList;
-                m.log(5, 'crawlQuidan: Site: ' + item.short + ', got ChapterList');
-
-                try {
-                    response = JSON.parse(content);
-                    chapterItems = response.data.volumeItems.reduce((acc, item) => acc.concat(item.chapterItems), []);
-                    chapterNumber = response.data.bookInfo.totalChapterNum;
-                } catch(err) {
-                    if (content.indexOf('"code":0,') !== -1) {
-                        m.log(4, 'Incomplete List, restarting Crawl for ' + item.short, err);
-                        return resolve(m.crawlQuidan(item));
-                    }
-                    console.log(err)
-                    return reject('crawlQuidan: cannot parse List for story - ' + item.short);
-                }
-
-                if (response.code !== 0) {
-                    m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting ChapterList: ', content);
-                    csrfToken = undefined;
-                    reject(content);
-                } else if (chapterNumber && item.start < chapterNumber) {
-                    chapterList = chapterItems.filter(chap => (chap.index > item.start && chap.isVip !== 2))
-                        .sort((a,b) => a.index - b.index)
-                        .filter((chap, index) => chap.index === item.start + index + 1 );
-
-                    if (!chapterList.length) {
-                        m.log(2, 'crawlQuidan: Site: ' + item.short + ', index updated, but chapter not yet available or paywalled');
-                        resolve(newChapters);
-                        return;
-                    }
-
-                    function recursiveCrawlingFunction (item, count) {
-                        let content, token;
-                        m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetContent?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].id}`, csrfToken)
-                        .then(chapterresponse => {
-                            m.log(5, 'crawlQuidan: Site: ' + item.short + '-' + count + ', got response');
-
-
-                            if (chapterresponse !== undefined && typeof(chapterresponse) !== 'object') {
-                                let chapterObject;
-
-                                try {
-                                    chapterObject = JSON.parse(chapterresponse);
-                                }
-
-                                catch(err) {
-                                    return Promise.reject('ObjectError');
-                                }
-
-                                if (!chapterObject) {
-                                    m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting Chapter: no chapterObject', `https://www.webnovel.com/apiajax/chapter/GetContent?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].id}`);
-                                    return Promise.reject('chapterObject error');
-                                } else if (chapterObject.code !== 0) {
-                                    m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting Chapter: ', chapterObject, `https://www.webnovel.com/apiajax/chapter/GetContent?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].id}`);
-                                    csrfToken = undefined;
-                                    return Promise.reject('done');;
-                                } else {
-                                    if (chapterObject.data && chapterObject.data.chapterInfo && chapterObject.data.chapterInfo.isAuth) {
-                                        return chapterObject;
-                                    } else {
-                                        return m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetChapterContentToken?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].id}`, csrfToken)
-                                            .then(tokenresponse => {
-                                                let response;
-
-                                                try {
-                                                    response = JSON.parse(tokenresponse);
-                                                    token = response.data.token;
-                                                }
-                                                catch(err) {
-                                                    token = undefined;
-                                                    return Promise.reject({type: 'invalidToken'});
-                                                }
-
-
-                                                if (!response || response.code !== 0) {
-                                                    return Promise.reject({type: 'invalidToken'})
-                                                }
-                                                if (response.data.user && response.data.user.status !== 0) {
-                                                    return Promise.reject({type: 'invalid login cookie'})
-                                                }
-                                                return token;
-                                            })
-                                            .then(token => new Promise(resolve => setTimeout(() => resolve(token), 10000 + 5000 * Math.random())))
-                                            .then(token => m.quidanRequest(`https://www.webnovel.com/apiajax/chapter/GetChapterContentByToken?_csrfToken=${csrfToken}&token=${token}`, csrfToken))
-                                            .then(resp => {
-                                                let chapterObject;
-                                                if (resp !== undefined && typeof(resp) !== 'object') {
-
-                                                    try {
-                                                        chapterObject = JSON.parse(resp);
-                                                    }
-
-                                                    catch(err) {
-                                                        return Promise.reject('ObjectError');
-                                                    }
-
-                                                    return chapterObject;
-                                                } else {
-                                                    return Promise.reject('ObjectError');
-                                                }
-                                            });
-                                    }
-                                }
-                            } else {
-                                reject('ObjectError');
-                            }
+                        pages.forEach((text, index) => {
+                            promise = promise.then(() => cDB.inputChapter(index + 1, 'false', short, text))
+                            .then(() => m.log(5, 'parsePdf: story: ' + short + ', Chapter: ', index + 1, ' - inserted successfully!'))
+                            .then(() => new Promise(resolve => setTimeout(() => resolve(), 100)))
                         })
-                        .then(chapterObject => {
-                            if (chapterObject.code !== 0 || !chapterObject.data || !chapterObject.data.content && !chapterObject.data.chapterInfo ) {
-                                m.log(2, 'crawlQuidan: Site: ' + item.short + ', Error requesting Chapter: ', chapterObject, `https://www.webnovel.com/apiajax/chapter/GetChapterContentToken?_csrfToken=${csrfToken}&bookId=${bookId}&chapterId=${chapterList[0].id}`, chapterObject);
-                                csrfToken = undefined;
-                                return Promise.reject('authError');
-                            } else {
-                                newChapters.chapters.push(count);
-                                cDB.inputChapter(count, 'false', item.short, ('<b>' + chapterList[0].index + ' - ' + chapterList[0].name + '</b><br><br>' + (chapterObject.data.content ? chapterObject.data.content : chapterObject.data.chapterInfo.content).replace(/[\n]/g, '<br>')))
-                                    .catch(m.promiseError);
 
-                                chapterList = chapterList.slice(1);
+                        return promise
+                    })
+                    .then(() => m.updateChapter(short, pages.length))
+                    .catch(m.promiseError)
+                    .then(() => {
+                        runningParse = false
+                    })
+            })
+    }
 
-                                m.setAsNewChapter(count, item.short);
-                                m.updateChapter(item.short, count, "quidan");
-                                if (chapterList.length) {
-                                    recursiveCrawlingFunction(item, parseInt(count) + 1);
-                                } else {
-                                    m.log(5, 'crawlQuidan: Site: ' + item.short + ', Crawl finished at Chapter ' + count);
-                                    resolve(newChapters);
-                                }
-                            }
-                        })
-                        .catch(err => {
-                            if (err === 'done' || err === 'authError') {
-                                resolve(newChapters);
-                            } else if (err.type === 'invalidToken') {
-                                m.log(5, 'Invalid Quidan Token, most likely paywall');
-                                resolve(newChapters);
-                            } else {
-                                m.log(2, 'Error: recursiveCrawlingFunction - ' + item.short + ':' + err);
-                                reject(err)
-                            }
-                        });
-                    }
-
-                    recursiveCrawlingFunction(item, item.start + 1);
-                } else {
-                    m.log(5, 'crawlQuidan: Site: ' + item.short + ', no new Chapter. Done.');
-                    resolve(newChapters);
-                }
-            });
-        });
-    };
-
-    m.crawlReddit = (item) => {
+    m.crawlWWC = (item) => {
         let newChapters = {
             short: item.short,
             chapters: []
         };
 
-        m.log(5, 'crawlReddit: story: ' + item.short + ', Chapter: ', item.start, ' - searching for: ', item.name, item.modified + '000');
-        return redCrawler.getChapters(`"${item.name}"`, item.modified + '000')
-            .then(chapters => {
-                m.log(5, 'crawlReddit: story: ' + item.short + ', Chapter: ', item.start, ' - got ', chapters.length, ' chapters');
+        m.log(5, 'crawlWWC : story: ' + item.short + ', Chapter: ', item.start);
+        return wwcCrawler(item)
+            .then(({chapters, currentLink}) => {
+                m.log(5, 'crawlWWC: story: ' + item.short + ', Chapter: ', item.start, ' - got ', chapters.length, ' chapters');
                 if (!chapters.length) return Promise.resolve(newChapters)
+
                 const updateChapters = Promise.all(chapters.map((chapter, index) => {
                     const id = item.start + index + 1;
                     m.setAsNewChapter(id, item.short);
                     return cDB.inputChapter(id, 'false', item.short, chapter)
-                        .then(() => m.log(5, 'crawlReddit: story: ' + item.short + ', Chapter: ', id, ' - inserted successfully!'));
+                        .then(() => m.log(5, 'crawlWWC: story: ' + item.short + ', Chapter: ', id, ' - inserted successfully!'));
                 }));
 
-                m.updateChapter(item.short, item.start + chapters.length, "reddit");
+                m.updateChapter(item.short, item.start + chapters.length, currentLink);
 
                 newChapters.chapters = chapters.map((chapter, index) => item.start + index + 1);
-                return updateChapters.then(() => newChapters, err => m.log(3, 'crawlReddit: story: ' + item.short, err))
+                return updateChapters.then(() => newChapters, err => m.log(3, 'crawlWWC: story: ' + item.short, err))
             })
             .catch(err => {
-                m.log(3, 'crawlReddit: story: ' + item.short + ', Chapter: ', item.start, ' - error crawling: ', err)
+                m.log(3, 'crawlWWC: story: ' + item.short + ', Chapter: ', item.start, ' - error crawling: ', err)
             })
 
-    }
-
-    m.getQuidanToken = (force) => {
-        return new Promise((resolve, reject) => {
-            if (force || csrfToken === undefined) {
-                request({
-                    method: 'HEAD',
-                    url: `https://www.webnovel.com/`,
-                    jar: myjar
-                }, (err, res, content) => {
-                    if (!res.headers['set-cookie']) {
-                        reject()
-                    }
-                    let csrfCookie = res.headers['set-cookie'].find(cookie => cookie.includes('csrfToken'))
-                    let webnovelIdCookie = res.headers['set-cookie'].find(cookie => cookie.includes('webnovel_uuid'))
-                    csrfToken = m.extractCookieValue(csrfCookie)
-                    if (csrfToken) {
-                        resolve();
-                    } else {
-                        reject();
-                    }
-                });
-            } else {
-                resolve();
-            }
-        });
-    };
-
-    m.extractCookieValue = (cookie) => {
-        let cookieKeyVal = cookie.split(';')[0]
-        return cookieKeyVal && cookieKeyVal.split('=')[1] || undefined
     }
 
     m.deleteSeries = (param) => {
         let vars = m.escapeArray(['short'], param);
-        Promise
+        return Promise
             .all([cDB.deleteStoryTable(vars), cDB.deleteStorySettings(vars)])
             .catch(m.promiseError);
     };
@@ -509,11 +143,6 @@ function methods (back) {
             m.log(1, 'escapeString-Error: '+ str +' is no string');
             throw "Not a String-Error!";
         }
-    };
-
-    m.getDate = () => {
-        var now = new Date();
-        return now.getFullYear() + ':' + (now.getMonth() + 1) + ':' + now.getDate() + '-' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
     };
 
     m.getNewChapterList = (userObject) => {
@@ -571,49 +200,6 @@ function methods (back) {
         };
     };
 
-    m.getUrl = (html) => {
-        var link,
-            match;
-
-        if (html.length) {
-            const $ = cheerio.load(html);
-            const mylink = $('.top-bar-area .next a') && $('.top-bar-area .next a').attr('href')
-
-            if (mylink && mylink.length > 5) {
-                m.log(5, 'getUrl: got link from html: ', mylink);
-                return 'http://www.wuxiaworld.com' + mylink;
-            } else if ($('.top-bar-area .next a').length) {
-                return false
-            }
-
-        }
-
-        match = html.split(/<[^<A-Za-z]*\/[^<A-Za-z]*a[^<A-Za-z]+/)
-                    .map(match => match.split(/<[^<A-Za-z/]*a[^<A-Za-z]+/)[1])
-                    .filter(match => match && match.match(/[NneE]?[EeXxNn][EexXtT][xXTt ]?[tT Cc][ CchH][CcHhAa][HhAaPp][AaPpTt][PpTtEe][TtEeRr][EeRr ]?/));
-
-        if (!match.length) {
-            //old fallback
-            m.log(6, 'getUrl: fallback parse used');
-            match = html.match(/[<a[\s\S]{0,50}?href.?=.?["|'][\s\S]{0,120}?["|'][\s\S]{0,50}?>[\s\S]{0,100}?<span[\s\S]{0,100}?[N|n]ext.?[C|c]hapter[\s\S]{0,200}?<\/a>|<a href=".{0,120}?">.?[N|n]ext.?[C|c]hapter.?<\/a>/);
-        }
-
-
-        if (match && typeof(match[0]) === 'string') {
-            link = match[0].split(/href.?=.?["|']/)[1].split(/["|']/)[0];
-            if (typeof(link) === 'string'){
-                m.log(5, 'getUrl: parsed link');
-                return link;
-            } else {
-                m.log(3, 'getUrl: could not parse link');
-                return false;
-            }
-        } else {
-            m.log(3, 'getUrl: could not parse body');
-            return false;
-        }
-    };
-
     m.markAllRead = (userObject) => {
         userObject.new++;
         return uDB.markAllRead(userObject.user);
@@ -633,19 +219,6 @@ function methods (back) {
             m.setAsNewForUser(vars.chapter, vars.short, userObject);
     };
 
-    m.messageKey = (param, userObject, method) => {
-        let currentUser = back.userList.filter((user) => user.user === userObject.user)[0],
-            deleteKey = method === 'DELETE';
-
-        if (!deleteKey && !currentUser.subscriptions) {
-            currentUser.subscriptions = [param];
-        } else if (!deleteKey && currentUser.subscriptions.filter(subscription => subscription.endpoint === param.endpoint).length !== 1) {
-            currentUser.subscriptions.push(param);
-        } else if (deleteKey && currentUser.subscriptions) {
-            currentUser.subscriptions = currentUser.subscriptions.filter(subscription => subscription.endpoint !== param.endpoint);
-        }
-    };
-
     m.setNotificationSettings = (param, userObject) => {
         let vars = m.escapeArray(['silent'], param),
             cleanedUserObject = back.userList.filter(user => user.user == userObject.user)[0];
@@ -654,67 +227,6 @@ function methods (back) {
         cleanedUserObject.silent = vars.silent;
 
         return uDB.updateUserSettings(userObject);
-    };
-
-    m._parseChapterData = (storyList, chapterLists) => {
-        let tmpChapterList = [];
-
-        chapterLists.forEach((chapters, index) => {
-            if (chapters.length > 0) {
-                let _story = storyList[index],
-                    parsedChapters = chapters.map((chapterObj) => {
-                    return {short: _story, Chapter: chapterObj.Chapter};
-                });
-                tmpChapterList = tmpChapterList.concat(parsedChapters);
-            }
-        });
-
-        m.log(4, '_parseChapterData: write temp list onto back.newChapterList');
-        back.newChapterList = tmpChapterList;
-    };
-
-    m.parseHtml = (html) => {
-        var retvar;
-        if (html.indexOf('<div itemprop="articleBody">') !== -1){
-            var temphtml = html.split('<div itemprop="articleBody">')[1]
-                            .split('class="entry-footer"')[0]
-                            .replace(/["']/g, "").replace(/<p>/g, '')
-                            .replace(/<\/p>/g, '<br>')
-                            .replace(/<.?a.*?>/g, '');
-            if (typeof(temphtml) === 'undefined') temphtml = '';
-            if (temphtml.length > 1000) {
-                let content = temphtml.split(/<hr\/>|<hr>/)[1];
-                if (!content || content.length < 5000) {
-                    content = temphtml.split('Next Chapter')[1];
-                    if (!content || content.length < 5000) {
-                        return '';
-                    }
-                }
-                return content;
-            } else {
-                return '';
-            }
-
-
-        } else if (html.indexOf('<article') !== -1) {
-            retvar = html.split(/<article.*?>/)[1]
-                        .split('</article>')[0]
-                        .replace(/<span class="copyright-obfuscation">[^<]*<\/span>/g, '')
-                        .replace(/<p.*?<a.*?ext Chapter.*?\/p>/, '')
-                        .split(/<p[^<]*?<a.*?ext Chapter.*?\/p>/g)[0]
-                        .replace(/<script.*?\/script>/, '')
-                        .replace(/["']/g, "")
-                        .replace(/<p>/g, '')
-                        .replace(/<\/p>/g, '<br>')
-                        .replace(/<.?a.*?>/g, '');
-        } else if (html.indexOf('fr-view') !== -1) {
-            const $ = cheerio.load(html);
-            retvar = $('.section-content > .panel > .p-15 > .fr-view').html();
-            retvar = retvar && retvar.replace(/<\/p>/g, '<\/p><br>')
-        }
-        retvar = (retvar !== undefined) ? retvar.replace(/<div[\s\S]{0,50}?class="sharedaddy"[\s\S]*?<\/div>/g, '') : "empty";
-
-        return striptags(retvar, ['br']);
     };
 
     m.promiseError = (errorMessage) => {
@@ -879,6 +391,11 @@ function methods (back) {
         });
     };
 
+    m.getDate = () => {
+        var now = new Date();
+        return now.getFullYear() + ':' + (now.getMonth() + 1) + ':' + now.getDate() + '-' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+    };
+
     m.triggerBuild = () => {
         m.log(1, 'triggerBuild');
         exec(process.env.CRAWLER_HOME + "scripts/buildCrawler", (error, stdout, stderr) => {
@@ -888,36 +405,6 @@ function methods (back) {
 
     m.updateChapter = (shortName, start, url) => {
             var query;
-
-            /**********************
-            ***   Exceptions    ***
-            **********************/
-
-            if (shortName === "ISSTH"){
-                if(start === 583 || start === 690) {
-                    start++;
-                }
-            }
-            if (shortName === "MGA"){
-                if(start === 133) {
-                    start++;
-                }
-            }
-            if (shortName === "MW"){
-                if(start === 415) {
-                    start++;
-                }
-            }
-
-            if (shortName === "SR"){
-                if(start === 833) {
-                    start++;
-                }
-            }
-
-            /**********************
-            ***  Exceptions-End ***
-            **********************/
 
             cDB.updateCurrentChapter(start, shortName, url)
                 .catch(m.promiseError);
@@ -930,26 +417,25 @@ function methods (back) {
             error = [];
             runningCrawls = true;
 
-            m.getQuidanToken()
-            .then(m.refreshQuidanKey)
-            .then(() => {
-                promArr = o.stories.map((item) => {
-                    error[item.short] = false;
-                    if (item.currentLink !== "false"){
-                        if (item.currentLink === "reddit") {
-                            return m.crawlReddit(item);
-                        } else if (item.currentLink === "quidan") {
-                            return m.crawlQuidan(item);
-                        } else {
-                            return m.crawlByLink(item);
-                        }
-                    } else {
-                        return m.crawlSite(item);
-                    }
-                });
 
-                return Promise.all(promArr)
-            })
+            promArr = o.stories.map((item) => {
+                error[item.short] = false;
+                if (item.currentLink !== "false" && item.rss === 'wwc') {
+                    return m.crawlWWC(item).catch((err) => {
+                        m.log(3, `CrawlingError in ${item.short}:`, err)
+                        return Promise.resolve({
+                            short: item.short,
+                            chapters: []
+                        })
+                    })
+                }
+                return Promise.resolve({
+                    short: item.short,
+                    chapters: []
+                })
+            });
+
+            Promise.all(promArr)
             .then((newChapters) => {
                 let notifyUsers,
                     newChapterStoryList;
@@ -963,17 +449,6 @@ function methods (back) {
                 m.log(3, 'Crawling completed.');
                 if (newChapterStoryList.length) {
                     m.log(3, 'got new chapters for ' + newChapterStoryList.map(story => story.short).join(', ') + '.');
-                    back.userList.forEach((user) => {
-                        m.log(2, 'debug:', back.userList)
-                        let userChapterList = newChapterStoryList.filter(story => user.stories.includes(story.short));
-                        if (userChapterList.length > 0 && user.subscriptions && user.subscriptions.length > 0) {
-                            m.log(4, 'sending Notification to user' + user.user + ' who has ' + user.subscriptions.length + ' subscriptions.');
-                            user.subscriptions.forEach(subscription => message.sendNotification(subscription, JSON.stringify({
-                                chapterArray: userChapterList,
-                                silent: user.silent
-                            }), {TTL: 3600}).catch(err => m.log(3, 'Error sending new chapters notification: ', err)));
-                        }
-                    });
                 } else {
                    m.log(3, 'No new Chapters.');
                 }
@@ -994,8 +469,6 @@ function methods (back) {
 
         }
     };
-
-    m.setQuidanUserInfo({userId:'4301352156', userKey:'unSFDoGdSYZ'})
 }
 
 module.exports = methods;

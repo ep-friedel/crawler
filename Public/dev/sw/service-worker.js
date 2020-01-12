@@ -1,7 +1,7 @@
 /*global Response, Blob, clients, self, caches, Request, Headers, console, fetch, navigator, setInterval, clearInterval, clearTimeout, setTimeout, indexedDB */
 
 'use strict';
-let version = '7',
+let version = '9',
     jwt,
     offline = new Response(new Blob(), {status: 279}),
     staticContent = [
@@ -13,6 +13,7 @@ let version = '7',
         'images/library_back.png',
         'images/library_book.png',
         'images/book_16.ico',
+        'fonts/nunito.woff2',
         'fonts/FontAwesome.otf?v=4.7.0',
         'fonts/fontawesome-webfont.eot?v=4.7.0',
         'fonts/fontawesome-webfont.svg?v=4.7.0',

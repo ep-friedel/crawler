@@ -12,7 +12,6 @@ function router(back) {
         ,   h = back.handler
         ,   o = back.options
         ,   m = back.methods
-        ,   reddit = require(process.env.CRAWLER_HOME + 'modules/core/reddit')
         ,   a = auth(back)
         ,   live = {
                 index: fs.readFileSync(process.env.CRAWLER_HOME + 'live/index.html').toString(),
@@ -46,7 +45,6 @@ function router(back) {
 
 
     app.use('/', express.static(process.env.CRAWLER_HOME + 'Public/live'));
-    app.use('/dsa', express.static(process.env.CRAWLER_HOME + 'DSA/file'));
     app.use('/', express.static(process.env.CRAWLER_HOME + 'manifest'));
     app.use('/', express.static(process.env.CRAWLER_HOME + 'Public/live/sw'));
     app.use('/images', express.static(process.env.CRAWLER_HOME + 'Public/images'));
@@ -112,12 +110,6 @@ function router(back) {
             });
     });
 
-    app.delete('/api/messageKey', a.isLoggedInAPI, (req, res) => {
-        m.log(2, 'API:delete:messageKey', (o.log >= 11) ? req : "");
-        h.messageKey(req.body, req.user, req.method);
-        res.status(200).send();
-    });
-
     /*--------------------------------------Admin-----------------------------------------*/
 
     app.delete('/api/series', a.isLoggedInAPI, a.isAdmin, (req, res) => {
@@ -144,19 +136,6 @@ function router(back) {
             res.status(500).send();
             m.promiseError(err);
         });
-    });
-
-    app.get('/api/test', (req, res) => {
-        m.log(2, 'API:test', (o.log >= 11) ? req : "");
-        reddit.getChapters(req.query.query, req.query.time)
-            .then(data => {
-                console.log(data)
-                res.status(200).send(data)
-            })
-            .catch(err => {
-                console.log(err)
-                res.status(500).send()
-            })
     });
 
     app.get('/api/requestChapter', a.isLoggedInAPI, (req, res) => {
@@ -243,12 +222,6 @@ function router(back) {
     ****************************            POST         **********************************
     */
 
-    app.post('/api/messageKey', a.isLoggedInAPI, (req, res) => {
-        m.log(2, 'API:post:messageKey', (o.log >= 11) ? req : "");
-        h.messageKey(req.body, req.user, req.method);
-        res.status(200).send();
-    });
-
     app.post('/api/triggerBuild', hmac, (req, res) => {
         m.log(2, 'API:post:triggerBuild', (o.log >= 11) ? req : "");
         h.triggerBuild();
@@ -291,12 +264,6 @@ function router(back) {
                 m.promiseError(err);
                 res.status(500).send();
             });
-    });
-
-    app.post('/api/quidanLogin', a.isLoggedInAPI, a.isAdmin, (req, res) => {
-        m.log(2, 'API:quidanLogin:post', (o.log >= 11) ? req : "");
-        h.setQuidanUserInfo(req.body)
-        res.status(200).send();
     });
 
     /*
@@ -379,6 +346,25 @@ function router(back) {
                 console.log(err);
                 res.status(500).send();
             });
+    });
+
+    app.get('/api/pdf', (req, res) => {
+        m.parsePdf('wot', 'Wheel of Time')
+        .then(() => res.status(200).send('done'))
+        .catch((err) => {
+            console.log(err)
+            res.status(200).send('fail')
+        })
+    })
+
+    //deprecated
+
+    app.delete('/api/messageKey', a.isLoggedInAPI, (req, res) => {
+        res.status(200).send();
+    });
+
+    app.post('/api/messageKey', a.isLoggedInAPI, (req, res) => {
+        res.status(200).send();
     });
 }
 
