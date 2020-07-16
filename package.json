@@ -19,7 +19,7 @@
     "deflate-js": "^0.2.3",
     "express": "^4.15.3",
     "jsonwebtoken": "^7.2.1",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.19",
     "moment": "^2.18.0",
     "mysql": "^2.11.1",
     "parse-pdf": "^1.0.0",
